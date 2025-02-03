@@ -38,17 +38,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.matulemain.R
 import com.example.matulemain.ui.theme.accent
 import com.example.matulemain.ui.theme.hint
 import com.example.matulemain.ui.theme.mainColor
 
 @Composable
-fun SignInScreen() {
+fun SignInScreen(navController: NavController) {
 
     //values
     var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("asdas") }
 
     //boolean
     var isEnabled by remember { mutableStateOf(false) }
@@ -109,7 +111,9 @@ fun SignInScreen() {
                     password = it
                 },
                 label = {
-                    Text(if (email.isEmpty()) "••••••••" else "", color = hint)
+                    if (password.isEmpty()){
+                        Text("••••••••", color = hint)
+                    }
                 },
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = mainColor,
@@ -120,7 +124,13 @@ fun SignInScreen() {
                 ),
                 visualTransformation = if (hider) PasswordVisualTransformation() else VisualTransformation.None,
                 trailingIcon = {
-
+                    Icon(
+                        painter = if(hider) painterResource(R.drawable.eye_open) else painterResource(R.drawable.eye_slash),
+                        null,
+                        modifier = Modifier.clickable {
+                            hider = !hider
+                        }
+                    )
                 },
                 shape = RoundedCornerShape(15.dp),
                 modifier = Modifier.fillMaxWidth()
@@ -150,7 +160,7 @@ fun SignInScreen() {
                     .fillMaxWidth()
                     .height(50.dp),
                 onClick = {
-
+                    navController.navigate("home")
                 },
                 shape = RoundedCornerShape(14.dp)
             ) {
@@ -213,5 +223,5 @@ private fun DialogWindowPreview() {
 @Preview
 @Composable
 private fun SignInScreenPreview() {
-    SignInScreen()
+    SignInScreen(rememberNavController())
 }

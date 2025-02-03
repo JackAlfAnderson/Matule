@@ -4,4 +4,5 @@ import io.github.jan.supabase.SupabaseClient
 
 class BaseManager(val supabaseClient: SupabaseClient) {
 
+
 }

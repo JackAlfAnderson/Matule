@@ -14,6 +14,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.matulemain.presentation.home.HomeScreen
+import com.example.matulemain.presentation.onBoarding.OnBoardingScreen
+import com.example.matulemain.presentation.signIn.SignInScreen
+import com.example.matulemain.presentation.splash.SplashScreen
 import com.example.matulemain.ui.theme.MatuleMainTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,13 +31,19 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController,
-                    startDestination = "signIn"
+                    startDestination = "splash"
                 ){
+                    composable(route = "splash") {
+                        SplashScreen(navController)
+                    }
+                    composable(route = "onBoarding") {
+                        OnBoardingScreen()
+                    }
                     composable(route = "home") {
-
+                        HomeScreen()
                     }
                     composable(route = "signIn") {
-
+                        SignInScreen(navController)
                     }
                     composable(route = "signUp") {
 
