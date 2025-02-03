@@ -11,6 +11,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.matulemain.presentation.home.HomeScreen
+import com.example.matulemain.presentation.onBoarding.OnBoardingScreen
+import com.example.matulemain.presentation.signIn.SignInScreen
+import com.example.matulemain.presentation.splash.SplashScreen
 import com.example.matulemain.ui.theme.MatuleMainTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +26,31 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MatuleMainTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+
+                val navController = rememberNavController()
+
+                NavHost(
+                    navController,
+                    startDestination = "splash"
+                ){
+                    composable(route = "splash") {
+                        SplashScreen(navController)
+                    }
+                    composable(route = "onBoarding") {
+                        OnBoardingScreen()
+                    }
+                    composable(route = "home") {
+                        HomeScreen()
+                    }
+                    composable(route = "signIn") {
+                        SignInScreen(navController)
+                    }
+                    composable(route = "signUp") {
+
+                    }
                 }
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MatuleMainTheme {
-        Greeting("Android")
-    }
-}
