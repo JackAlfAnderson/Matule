@@ -39,12 +39,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.matulemain.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun OnBoardingScreen() {
+fun OnBoardingScreen(navController: NavController) {
 
     val pages = listOf(
         OnBoardItem(
@@ -100,7 +102,7 @@ fun OnBoardingScreen() {
                     if(pagerState.currentPage != 2){
                         pagerState.animateScrollToPage(pagerState.currentPage + 1)
                     }else{
-                        //navigateplease
+                        navController.navigate("home")
                     }
 
                 }
@@ -224,7 +226,7 @@ fun OnBoardFirstScreen() {
 @Preview
 @Composable
 private fun OnBoardScreensPreview() {
-    OnBoardingScreen()
+    OnBoardingScreen(rememberNavController())
 }
 
 @Preview

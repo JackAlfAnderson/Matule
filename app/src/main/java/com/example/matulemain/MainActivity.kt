@@ -14,11 +14,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.matulemain.data.app.App
+import com.example.matulemain.data.supabase.MainViewModel
 import com.example.matulemain.presentation.home.HomeScreen
 import com.example.matulemain.presentation.onBoarding.OnBoardingScreen
 import com.example.matulemain.presentation.signIn.SignInScreen
 import com.example.matulemain.presentation.splash.SplashScreen
 import com.example.matulemain.ui.theme.MatuleMainTheme
+
+
+val mainViewModel = MainViewModel(App.instance.baseManager)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,10 +42,10 @@ class MainActivity : ComponentActivity() {
                         SplashScreen(navController)
                     }
                     composable(route = "onBoarding") {
-                        OnBoardingScreen()
+                        OnBoardingScreen(navController)
                     }
                     composable(route = "home") {
-                        HomeScreen()
+                        HomeScreen(mainViewModel, navController)
                     }
                     composable(route = "signIn") {
                         SignInScreen(navController)
