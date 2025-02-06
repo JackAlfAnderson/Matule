@@ -10,13 +10,21 @@ import kotlinx.coroutines.launch
 class MainViewModel(val baseManager: BaseManager) : ViewModel() {
 
     val listOfProducts = MutableStateFlow(listOf<Product>())
+    val isShow = MutableStateFlow(false)
 
     fun getProducts() = viewModelScope.launch{
 
+        isShow.update {
+            true
+        }
         val prod = baseManager.getProducts()
 
         listOfProducts.update {
             prod
+        }
+
+        isShow.update {
+            false
         }
     }
 

@@ -1,5 +1,6 @@
 package com.example.matulemain.presentation.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,6 +58,10 @@ fun HomeScreen(mainViewModel: MainViewModel, navController: NavController) {
     }
 
     val listOfProducts by mainViewModel.listOfProducts.collectAsState()
+
+    var context = LocalContext.current
+
+    val isShow: Boolean by mainViewModel.isShow.collectAsState()
 
     Column(
         modifier = Modifier
@@ -135,7 +142,7 @@ fun HomeScreen(mainViewModel: MainViewModel, navController: NavController) {
                 Spacer(Modifier.height(30.dp))
                 LazyRow {
                     items(listOfProducts) { sneaker ->
-                        SneakerScreen(sneaker)
+                        SneakerScreen(sneaker, isShow)
                     }
                 }
             }
@@ -146,21 +153,168 @@ fun HomeScreen(mainViewModel: MainViewModel, navController: NavController) {
 
 @Preview
 @Composable
+private fun HomePreview() {
+    val categories = listOf(
+        "Все",
+        "outdoor",
+        "tennis"
+    )
+
+
+    Column(
+        modifier = Modifier
+            .background(back)
+            .fillMaxSize()
+    ) {
+        Column(
+            Modifier
+                .padding(20.dp)
+                .fillMaxSize()
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Icon(
+                        painterResource(R.drawable.mainhighlight),
+                        null,
+                        tint = Color.Unspecified,
+                        modifier = Modifier.padding(end = 130.dp, bottom = 30.dp)
+                    )
+                    Text(
+                        "Главная",
+                        fontSize = 32.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                Box(Modifier.fillMaxWidth()) {
+                    Icon(
+                        painterResource(R.drawable.hamburger),
+                        null,
+                        tint = Color.Unspecified
+                    )
+                }
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                    Icon(
+                        painterResource(R.drawable.bagnotifiedicon),
+                        null,
+                        tint = Color.Unspecified
+                    )
+                }
+            }
+            Column(
+
+            ) {
+                Spacer(Modifier.height(21.dp))
+                Row {
+                    Icon(
+                        painterResource(R.drawable.searchbutton),
+                        null,
+                        tint = Color.Unspecified
+                    )
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                        Icon(
+                            painterResource(R.drawable.settings),
+                            null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(52.dp)
+                        )
+                    }
+
+                }
+                Spacer(Modifier.height(22.dp))
+                Text("Категории", fontSize = 16.sp)
+                Spacer(Modifier.height(19.dp))
+                LazyRow {
+                    items(categories) { category ->
+                        CategoryItem(category)
+                        Spacer(Modifier.width(16.dp))
+                    }
+                }
+                Spacer(Modifier.height(24.dp))
+                Row {
+                    Text("Популярное", fontSize = 16.sp)
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                        Text("Все", fontSize = 16.sp, color = accent)
+                    }
+                }
+                Spacer(Modifier.height(30.dp))
+                LazyRow {
+                    item() {
+                        SneakerScreen(
+                            Product(
+                                null,
+                                "Air Hueir Maksimus",
+                                null,
+                                null,
+                                null,
+                                true,
+                                null,
+                                null
+                            ),
+                            isShow = true
+                        )
+                    }
+                    item {
+                        SneakerScreen(
+                            Product(
+                                null,
+                                "Air Hueir Maksimus",
+                                null,
+                                null,
+                                null,
+                                true,
+                                null,
+                                null
+                            ),
+                            isShow = true
+                        )
+                    }
+                }
+                Spacer(Modifier.height(24.dp))
+                Row {
+                    Text("Акции", fontSize = 16.sp)
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                        Text("Все", fontSize = 16.sp, color = accent)
+                    }
+                }
+                Spacer(Modifier.height(20.dp))
+                Column(
+                    Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painterResource(R.drawable.akciaimage),
+                        null,
+                        modifier = Modifier.size(width = 335.dp, height = 95.dp)
+                    )
+                }
+            }
+
+        }
+    }
+}
+
+
+@Preview
+@Composable
 private fun SneakersPreview() {
-    SneakerScreen(Product(
-        null,
-        "Air Hueir Maksimus",
-        null,
-        null,
-        null,
-        true,
-        null,
-        null
-    ))
+    SneakerScreen(
+        Product(
+            null,
+            "Air Hueir Maksimus",
+            null,
+            null,
+            null,
+            true,
+            null,
+            null
+        ),
+        isShow = true
+    )
 }
 
 @Composable
-fun SneakerScreen(product: Product) {
+fun SneakerScreen(product: Product, isShow: Boolean) {
 
     Column(
         Modifier.padding(end = 15.dp, bottom = 15.dp)
@@ -189,9 +343,10 @@ fun SneakerScreen(product: Product) {
                         ) {
                             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                                 Icon(
-                                    painterResource(R.drawable.heart),
+                                    painterResource(R.drawable.favoriteicon),
                                     null,
-                                    tint = Color.Unspecified
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(16.dp)
                                 )
                             }
                         }
@@ -202,31 +357,46 @@ fun SneakerScreen(product: Product) {
                             .padding(top = 18.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        AsyncImage(
-                            model = product.image,
-                            null,
-                            modifier = Modifier.size(width = 142.dp, height = 70.dp)
-                        )
+                        if (isShow) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp), // Увеличьте размер индикатора
+                                color = mainColor // Установите цвет индикатора
+                            )
+                        } else {
+                            AsyncImage(
+                                model = product.image,
+                                contentDescription = null,
+                                modifier = Modifier.size(width = 142.dp, height = 70.dp)
+                            )
+                        }
                     }
                     Column(
                         Modifier.padding(top = 100.dp, start = 9.dp)
                     ) {
-                        Text(if (product.best_seller == true) "BEST SELLER" else "", color = accent)
-                        Spacer(Modifier.height(6.dp))
-                        Text(if (product.name!!.length > 13) product.name.take(13)+ "..." else product.name, color = hint)
-                        Spacer(Modifier.height(12.dp))
                         Text(
-                            "₽ ${product.price}"
+                            if (product.best_seller == true) "BEST SELLER" else "",
+                            color = accent,
+                            fontSize = 12.sp
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            if (product.name!!.length > 13) product.name.take(13) + "..." else product.name,
+                            color = hint,
+                            fontSize = 16.sp
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            "₽ ${product.price} "
                         )
                     }
 
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
+
                         Icon(
                             painterResource(R.drawable.plus_icon),
                             null,
                             tint = Color.Unspecified,
                             modifier = Modifier.clickable {
-
                             }
                         )
                     }
