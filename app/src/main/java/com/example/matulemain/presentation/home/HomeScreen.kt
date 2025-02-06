@@ -25,6 +25,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,8 +62,6 @@ fun HomeScreen(mainViewModel: MainViewModel, navController: NavController) {
 
     val listOfProducts by mainViewModel.listOfProducts.collectAsState()
 
-    var context = LocalContext.current
-
     val isShow: Boolean by mainViewModel.isShow.collectAsState()
 
     Column(
@@ -92,14 +93,17 @@ fun HomeScreen(mainViewModel: MainViewModel, navController: NavController) {
                     Icon(
                         painterResource(R.drawable.hamburger),
                         null,
-                        tint = Color.Unspecified
+                        tint = Color.Unspecified,
+                        modifier = Modifier.clickable {
+
+                        }
                     )
                 }
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                     Icon(
                         painterResource(R.drawable.bagnotifiedicon),
                         null,
-                        tint = Color.Unspecified
+                        tint = Color.Unspecified,
                     )
                 }
             }
@@ -107,23 +111,31 @@ fun HomeScreen(mainViewModel: MainViewModel, navController: NavController) {
 
             ) {
                 Spacer(Modifier.height(21.dp))
-                Row {
-                    Icon(
-                        painterResource(R.drawable.searchbutton),
-                        null,
-                        tint = Color.Unspecified
-                    )
+                Box(Modifier.fillMaxWidth()) {
+                    Box(Modifier.fillMaxWidth()) {
+                        Icon(
+                            painterResource(R.drawable.searchbutton),
+                            null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier
+                                .width(269.dp)
+                                .clickable {
+
+                                }
+                        )
+                    }
                     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                         Icon(
                             painterResource(R.drawable.settings),
                             null,
                             tint = Color.Unspecified,
-                            modifier = Modifier.size(52.dp)
+                            modifier = Modifier.clickable {
+
+                            }
                         )
                     }
-
                 }
-                Spacer(Modifier.height(22.dp))
+                Spacer(Modifier.height(18.dp))
                 Text("Категории", fontSize = 16.sp)
                 Spacer(Modifier.height(19.dp))
                 LazyRow {
@@ -136,7 +148,10 @@ fun HomeScreen(mainViewModel: MainViewModel, navController: NavController) {
                 Row {
                     Text("Популярное", fontSize = 16.sp)
                     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                        Text("Все", fontSize = 16.sp, color = accent)
+                        Text("Все", fontSize = 16.sp, color = accent, modifier = Modifier.clickable {
+
+                            }
+                        )
                     }
                 }
                 Spacer(Modifier.height(30.dp))
@@ -144,6 +159,27 @@ fun HomeScreen(mainViewModel: MainViewModel, navController: NavController) {
                     items(listOfProducts) { sneaker ->
                         SneakerScreen(sneaker, isShow)
                     }
+                }
+                Spacer(Modifier.height(24.dp))
+                Row {
+                    Text("Акции", fontSize = 16.sp)
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                        Text("Все", fontSize = 16.sp, color = accent, modifier = Modifier.clickable {
+
+                            }
+                        )
+                    }
+                }
+                Spacer(Modifier.height(20.dp))
+                Column(
+                    Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painterResource(R.drawable.akciaimage),
+                        null,
+                        modifier = Modifier.size(width = 335.dp, height = 95.dp)
+                    )
                 }
             }
 
@@ -205,21 +241,17 @@ private fun HomePreview() {
 
             ) {
                 Spacer(Modifier.height(21.dp))
-                Row {
-                    Icon(
-                        painterResource(R.drawable.searchbutton),
-                        null,
-                        tint = Color.Unspecified
-                    )
-                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                Box(Modifier.fillMaxWidth()) {
+                    Box(Modifier.fillMaxWidth()) {
                         Icon(
-                            painterResource(R.drawable.settings),
+                            painterResource(R.drawable.searchbutton),
                             null,
-                            tint = Color.Unspecified,
-                            modifier = Modifier.size(52.dp)
+                            tint = Color.Unspecified
                         )
                     }
-
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                        Icon(painterResource(R.drawable.settings), null, tint = Color.Unspecified)
+                    }
                 }
                 Spacer(Modifier.height(22.dp))
                 Text("Категории", fontSize = 16.sp)
@@ -402,6 +434,72 @@ fun SneakerScreen(product: Product, isShow: Boolean) {
                     }
                 }
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun sdfsdfs() {
+    var activeIcon by remember { mutableStateOf(0) }
+
+
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+
+        Icon(
+            painterResource(R.drawable.carticon),
+            null,
+            tint = Color.Unspecified,
+            modifier = Modifier
+                .padding(bottom = 20.dp)
+                .clickable { }
+        )
+        Icon(
+            painter = painterResource(R.drawable.bottomnavigation),
+            null,
+            tint = Color.Unspecified
+        )
+        Row(Modifier.padding(bottom = 30.dp)) {
+            Icon(
+                painter = painterResource(R.drawable.homeicon),
+                null,
+                tint = if (activeIcon == 1) accent else Color.Unspecified,
+                modifier = Modifier.clickable {
+                    activeIcon = 1
+
+                }
+            )
+            Spacer(Modifier.width(40.dp))
+            Icon(
+                painter = painterResource(R.drawable.favoriteicon),
+                null,
+                tint = if (activeIcon == 2) accent else Color.Unspecified,
+                modifier = Modifier.clickable {
+                    activeIcon = 2
+
+                }
+            )
+            Spacer(Modifier.width(140.dp))
+            Icon(
+                painter = painterResource(R.drawable.notificationicon),
+                null,
+                tint = if (activeIcon == 3) accent else Color.Unspecified,
+                modifier = Modifier.clickable {
+                    activeIcon = 3
+
+                }
+            )
+            Spacer(Modifier.width(40.dp))
+
+            Icon(
+                painter = painterResource(R.drawable.profileicon),
+                null,
+                tint = if (activeIcon == 4) accent else Color.Unspecified,
+                modifier = Modifier.clickable {
+                    activeIcon = 4
+
+                }
+            )
         }
     }
 }

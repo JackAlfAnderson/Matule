@@ -67,24 +67,31 @@ fun OnBoardingScreen(navController: NavController) {
     )
     var pagerState = rememberPagerState { pages.size }
 
-    Box(Modifier.fillMaxSize()) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Brush.verticalGradient(listOf(Color(0xFF48B2E7), Color(0xFF44A9DC), Color(0xFF2B6B8B))))
+    ) {
         HorizontalPager(pagerState) { page ->
             val alpha by animateFloatAsState(
                 if (pagerState.currentPage == page) 1f else 0f,
-                tween(300)
+                animationSpec = tween(300)
             )
             Box(
-                Modifier
+                modifier = Modifier
                     .fillMaxSize()
-
-            ) {
+                    .graphicsLayer(alpha = alpha)
+            ){
                 if (page == 0) {
                     OnBoardFirstScreen()
                 } else {
                     OnBoardOtherScreen(pages[page])
                 }
             }
+
         }
+
     }
     val scope = rememberCoroutineScope()
 
@@ -119,7 +126,7 @@ fun OnBoardingScreen(navController: NavController) {
     }
 
     val paddingIdicator by animateDpAsState(
-        if (pagerState.currentPage == 0) 212.dp else 171.dp,
+        if (pagerState.currentPage == 0) 200.dp else 160.dp,
         tween(300)
     )
 
@@ -162,7 +169,6 @@ fun OnBoardingScreen(navController: NavController) {
 fun OnBoardOtherScreen(onBoardItem: OnBoardItem) {
     Column(
         modifier = Modifier
-            .background(Brush.verticalGradient(listOf(Color(0xFF48B2E7), Color(0xFF2B6B8B))))
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -175,6 +181,7 @@ fun OnBoardOtherScreen(onBoardItem: OnBoardItem) {
         )
         Text(
             onBoardItem.title,
+            lineHeight = 48.sp,
             fontSize = 34.sp,
             modifier = Modifier.padding(horizontal = 70.dp),
             color = Color.White,
@@ -184,7 +191,7 @@ fun OnBoardOtherScreen(onBoardItem: OnBoardItem) {
         Text(
             onBoardItem.subtitle,
             fontSize = 16.sp,
-            modifier = Modifier.padding(horizontal = 70.dp),
+            modifier = Modifier.padding(horizontal = 30.dp),
             color = Color(0xffD8D8D8),
             textAlign = TextAlign.Center
         )
@@ -198,17 +205,18 @@ fun OnBoardFirstScreen() {
     Column {
         Column(
             modifier = Modifier
-                .background(Brush.verticalGradient(listOf(Color(0xFF48B2E7), Color(0xFF2B6B8B))))
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 "Добро пожаловать".uppercase(),
+                lineHeight = 36.sp,
                 fontSize = 30.sp,
                 modifier = Modifier.padding(horizontal = 70.dp),
                 color = Color.White,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+
             )
             Image(
                 painter = painterResource(R.drawable.first_sneaker), null,

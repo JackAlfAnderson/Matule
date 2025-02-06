@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -99,6 +100,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun BottomNavigation() {
+
+    var activeIcon by remember { mutableStateOf(0) }
+
+
     Box (Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter){
         Icon(
             painter = painterResource(R.drawable.bottomnavigation),
@@ -109,26 +114,42 @@ private fun BottomNavigation() {
             Icon(
                 painter = painterResource(R.drawable.homeicon),
                 null,
-                tint = Color.Unspecified
+                tint = if(activeIcon == 1) accent else Color.Unspecified,
+                modifier = Modifier.clickable {
+                    activeIcon = 1
+
+                }
             )
             Spacer(Modifier.width(40.dp))
             Icon(
                 painter = painterResource(R.drawable.favoriteicon),
                 null,
-                tint = Color.Unspecified
+                tint = if(activeIcon == 2 ) accent else Color.Unspecified,
+                modifier = Modifier.clickable {
+                    activeIcon = 2
+
+                }
             )
             Spacer(Modifier.width(140.dp))
             Icon(
                 painter = painterResource(R.drawable.notificationicon),
                 null,
-                tint = Color.Unspecified
+                tint = if(activeIcon == 3) accent else Color.Unspecified,
+                modifier = Modifier.clickable {
+                    activeIcon = 3
+
+                }
             )
             Spacer(Modifier.width(40.dp))
 
             Icon(
                 painter = painterResource(R.drawable.profileicon),
                 null,
-                tint = Color.Unspecified
+                tint = if(activeIcon == 4) accent else Color.Unspecified,
+                modifier = Modifier.clickable {
+                    activeIcon = 4
+
+                }
             )
         }
     }
