@@ -1,5 +1,6 @@
 package com.example.matulemain.presentation.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.example.matulemain.R
+import com.example.matulemain.data.app.App
 import com.example.matulemain.data.domain.models.Product
 import com.example.matulemain.data.supabase.MainViewModel
 import com.example.matulemain.ui.theme.accent
@@ -52,17 +54,17 @@ fun HomeScreen(mainViewModel: MainViewModel, navController: NavController) {
 
     val categories = listOf(
         "Все",
-        "outdoor",
-        "tennis"
+        "Outdoor",
+        "Tennis",
+        "Running"
     )
 
     LaunchedEffect(Unit) {
+        Log.d("prod", "я запустился раз")
         mainViewModel.getProducts()
     }
 
     val listOfProducts by mainViewModel.listOfProducts.collectAsState()
-
-    val isShow: Boolean by mainViewModel.isShow.collectAsState()
 
     Column(
         modifier = Modifier
@@ -140,7 +142,7 @@ fun HomeScreen(mainViewModel: MainViewModel, navController: NavController) {
                 Spacer(Modifier.height(19.dp))
                 LazyRow {
                     items(categories) { category ->
-                        CategoryItem(category)
+                        CategoryItemHome(category, navController)
                         Spacer(Modifier.width(16.dp))
                     }
                 }
@@ -148,29 +150,45 @@ fun HomeScreen(mainViewModel: MainViewModel, navController: NavController) {
                 Row {
                     Text("Популярное", fontSize = 16.sp)
                     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                        Text("Все", fontSize = 16.sp, color = accent, modifier = Modifier.clickable {
+                        Text(
+                            "Все",
+                            fontSize = 16.sp,
+                            color = accent,
+                            modifier = Modifier.clickable {
 
                             }
                         )
                     }
                 }
                 Spacer(Modifier.height(30.dp))
-                LazyRow {
-                    items(listOfProducts) { sneaker ->
-                        SneakerScreen(sneaker, isShow)
+                if (listOfProducts.isNotEmpty()) {
+                    LazyRow {
+                        items(listOfProducts) { sneaker ->
+                            SneakerScreen(sneaker)
+                            Spacer(Modifier.width(15.dp))
+                        }
                     }
+                } else {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(128.dp)
+                    )
                 }
+
                 Spacer(Modifier.height(24.dp))
                 Row {
                     Text("Акции", fontSize = 16.sp)
                     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                        Text("Все", fontSize = 16.sp, color = accent, modifier = Modifier.clickable {
+                        Text(
+                            "Все",
+                            fontSize = 16.sp,
+                            color = accent,
+                            modifier = Modifier.clickable {
 
                             }
                         )
                     }
                 }
-                Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.height(2.dp))
                 Column(
                     Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -258,7 +276,6 @@ private fun HomePreview() {
                 Spacer(Modifier.height(19.dp))
                 LazyRow {
                     items(categories) { category ->
-                        CategoryItem(category)
                         Spacer(Modifier.width(16.dp))
                     }
                 }
@@ -282,8 +299,7 @@ private fun HomePreview() {
                                 true,
                                 null,
                                 null
-                            ),
-                            isShow = true
+                            )
                         )
                     }
                     item {
@@ -297,8 +313,7 @@ private fun HomePreview() {
                                 true,
                                 null,
                                 null
-                            ),
-                            isShow = true
+                            )
                         )
                     }
                 }
@@ -340,16 +355,14 @@ private fun SneakersPreview() {
             true,
             null,
             null
-        ),
-        isShow = true
+        )
     )
 }
 
 @Composable
-fun SneakerScreen(product: Product, isShow: Boolean) {
+fun SneakerScreen(product: Product) {
 
     Column(
-        Modifier.padding(end = 15.dp, bottom = 15.dp)
     ) {
         Card(
             colors = CardDefaults.cardColors(
@@ -378,7 +391,11 @@ fun SneakerScreen(product: Product, isShow: Boolean) {
                                     painterResource(R.drawable.favoriteicon),
                                     null,
                                     tint = Color.Unspecified,
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .clickable {
+
+                                        }
                                 )
                             }
                         }
@@ -389,18 +406,12 @@ fun SneakerScreen(product: Product, isShow: Boolean) {
                             .padding(top = 18.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        if (isShow) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp), // Увеличьте размер индикатора
-                                color = mainColor // Установите цвет индикатора
-                            )
-                        } else {
-                            AsyncImage(
-                                model = product.image,
-                                contentDescription = null,
-                                modifier = Modifier.size(width = 142.dp, height = 70.dp)
-                            )
-                        }
+                        AsyncImage(
+                            model = product.image,
+                            contentDescription = null,
+                            modifier = Modifier.size(width = 142.dp, height = 70.dp)
+                        )
+
                     }
                     Column(
                         Modifier.padding(top = 100.dp, start = 9.dp)
@@ -457,7 +468,8 @@ private fun sdfsdfs() {
         Icon(
             painter = painterResource(R.drawable.bottomnavigation),
             null,
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
+            modifier = Modifier.fillMaxWidth()
         )
         Row(Modifier.padding(bottom = 30.dp)) {
             Icon(
@@ -505,13 +517,24 @@ private fun sdfsdfs() {
 }
 
 @Composable
-fun CategoryItem(text: String) {
+fun CategoryItemHome(text: String, navController: NavController) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
         shape = RoundedCornerShape(8.dp),
-        modifier = Modifier.size(width = 108.dp, height = 50.dp)
+        modifier = Modifier
+            .size(width = 108.dp, height = 50.dp)
+            .clickable {
+                navController.navigate("category")
+                when (text) {
+                    "Все" -> App.chosenCategory = 0
+                    "Outdoor" -> App.chosenCategory = 1
+                    "Tennis" -> App.chosenCategory = 2
+                    "Running" -> App.chosenCategory = 3
+
+                }
+            }
     ) {
         Box(
             Modifier.fillMaxSize(), contentAlignment = Alignment.Center

@@ -41,7 +41,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.matulemain.data.app.App
 import com.example.matulemain.data.domain.models.Product
 import com.example.matulemain.data.supabase.MainViewModel
-import com.example.matulemain.presentation.home.CategoryItem
+import com.example.matulemain.presentation.category.CategoryScreen
 import com.example.matulemain.presentation.home.HomeScreen
 import com.example.matulemain.presentation.home.SneakerScreen
 import com.example.matulemain.presentation.onBoarding.OnBoardingScreen
@@ -88,6 +88,10 @@ class MainActivity : ComponentActivity() {
                         isBottom = false
 
                     }
+                    composable(route = "category") {
+                        isBottom = false
+                        CategoryScreen(mainViewModel, navController)
+                    }
                 }
                 if(isBottom){
                     BottomNavigation()
@@ -105,6 +109,14 @@ private fun BottomNavigation() {
 
 
     Box (Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter){
+        Icon(
+            painterResource(R.drawable.carticon),
+            null,
+            tint = Color.Unspecified,
+            modifier = Modifier
+                .padding(bottom = 20.dp)
+                .clickable { }
+        )
         Icon(
             painter = painterResource(R.drawable.bottomnavigation),
             null,
