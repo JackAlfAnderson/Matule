@@ -158,7 +158,7 @@ fun HomeScreen(mainViewModel: MainViewModel, navController: NavController) {
                             fontSize = 16.sp,
                             color = accent,
                             modifier = Modifier.clickable {
-
+                                navController.navigate("popular")
                             }
                         )
                     }

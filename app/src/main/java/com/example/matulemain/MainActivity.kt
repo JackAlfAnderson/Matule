@@ -45,6 +45,7 @@ import com.example.matulemain.presentation.category.CategoryScreen
 import com.example.matulemain.presentation.home.HomeScreen
 import com.example.matulemain.presentation.home.SneakerScreen
 import com.example.matulemain.presentation.onBoarding.OnBoardingScreen
+import com.example.matulemain.presentation.popularScreen.PopularScreen
 import com.example.matulemain.presentation.signIn.SignInScreen
 import com.example.matulemain.presentation.splash.SplashScreen
 import com.example.matulemain.ui.theme.MatuleMainTheme
@@ -91,6 +92,10 @@ class MainActivity : ComponentActivity() {
                     composable(route = "category") {
                         isBottom = false
                         CategoryScreen(mainViewModel, navController)
+                    }
+                    composable(route = "popular") {
+                        isBottom = false
+                        PopularScreen()
                     }
                 }
                 if(isBottom){

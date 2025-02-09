@@ -13,7 +13,7 @@ class MainViewModel(val baseManager: BaseManager) : ViewModel() {
 
     val listOfProducts = MutableStateFlow(listOf<Product>())
     val isShow = MutableStateFlow(false)
-    val listOfFavorites = MutableStateFlow(listOf<Favorite>())
+    val listOfFavorites = MutableStateFlow(listOf<Product>())
 
     fun getProducts() = viewModelScope.launch{
 

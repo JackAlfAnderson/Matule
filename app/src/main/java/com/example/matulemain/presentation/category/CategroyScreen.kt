@@ -83,7 +83,7 @@ fun CategoryScreen(mainViewModel: MainViewModel, navController: NavController) {
             Box(contentAlignment = Alignment.Center) {
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Text(
-                        "Category",
+                        categories[App.chosenCategory],
                         fontSize = 16.sp,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()

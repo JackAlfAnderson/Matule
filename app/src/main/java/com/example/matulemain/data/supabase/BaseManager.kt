@@ -8,7 +8,7 @@ import io.github.jan.supabase.postgrest.postgrest
 
 class BaseManager(val supabaseClient: SupabaseClient) {
 
-    suspend fun getProducts(): List<Product>{
+    suspend fun getProducts(): List<Product> {
         Log.d("prod", "я запустился три")
 
         val prod = supabaseClient.postgrest["products"].select().decodeList<Product>()
@@ -19,11 +19,11 @@ class BaseManager(val supabaseClient: SupabaseClient) {
         return prod
     }
 
-    suspend fun insertFavorite(favorite: Favorite){
+    suspend fun insertFavorite(favorite: Favorite) {
         supabaseClient.postgrest["favorites"].insert(favorite)
     }
 
-    suspend fun deleteFavorite(userId: String, productId:String){
+    suspend fun deleteFavorite(userId: String, productId: String) {
         supabaseClient.postgrest["favorites"].delete {
             filter {
                 eq("user_id", userId)
@@ -32,13 +32,26 @@ class BaseManager(val supabaseClient: SupabaseClient) {
         }
     }
 
-    suspend fun getFavoriteList(userId:String): List<Favorite>{
+    suspend fun getFavoriteList(userId: String): List<Product> {
         val listOfFav = supabaseClient.postgrest["favorites"].select {
             filter {
                 eq("user_id", userId)
             }
         }.decodeList<Favorite>()
 
-        return listOfFav
+        val listOfFavProd = mutableListOf<Product>()
+
+        listOfFav.forEach {
+            listOfFavProd.add(
+                supabaseClient.postgrest["products"].select {
+                    filter {
+                        eq("id", it.product_id)
+                    }
+                }.decodeSingle<Product>()
+            )
+        }
+
+
+        return listOfFavProd
     }
 }
