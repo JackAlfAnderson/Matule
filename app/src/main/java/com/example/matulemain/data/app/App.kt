@@ -1,6 +1,7 @@
 package com.example.matulemain.data.app
 
 import android.app.Application
+import com.example.matulemain.data.domain.models.Favorite
 import com.example.matulemain.data.domain.models.Product
 import com.example.matulemain.data.supabase.BaseManager
 import io.github.jan.supabase.SupabaseClient
@@ -15,7 +16,8 @@ class App() : Application() {
         lateinit var instance: App
             private set
         var chosenCategory = 0
-
+        var userId = "1c209d33-174e-434c-a4ca-4e46ef8fe855"
+        var listOfFavorite = mutableListOf<Favorite>()
     }
 
     override fun onCreate() {

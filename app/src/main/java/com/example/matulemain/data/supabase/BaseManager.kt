@@ -20,7 +20,25 @@ class BaseManager(val supabaseClient: SupabaseClient) {
     }
 
     suspend fun insertFavorite(favorite: Favorite){
-        supabaseClient.postgrest["favorite"].insert(favorite)
+        supabaseClient.postgrest["favorites"].insert(favorite)
     }
 
+    suspend fun deleteFavorite(userId: String, productId:String){
+        supabaseClient.postgrest["favorites"].delete {
+            filter {
+                eq("user_id", userId)
+                eq("product_id", productId)
+            }
+        }
+    }
+
+    suspend fun getFavoriteList(userId:String): List<Favorite>{
+        val listOfFav = supabaseClient.postgrest["favorites"].select {
+            filter {
+                eq("user_id", userId)
+            }
+        }.decodeList<Favorite>()
+
+        return listOfFav
+    }
 }

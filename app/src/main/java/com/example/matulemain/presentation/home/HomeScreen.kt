@@ -42,12 +42,15 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.example.matulemain.R
 import com.example.matulemain.data.app.App
+import com.example.matulemain.data.domain.models.Favorite
 import com.example.matulemain.data.domain.models.Product
 import com.example.matulemain.data.supabase.MainViewModel
+import com.example.matulemain.mainViewModel
 import com.example.matulemain.ui.theme.accent
 import com.example.matulemain.ui.theme.back
 import com.example.matulemain.ui.theme.hint
 import com.example.matulemain.ui.theme.mainColor
+import com.example.matulemain.ui.theme.red
 
 @Composable
 fun HomeScreen(mainViewModel: MainViewModel, navController: NavController) {
@@ -361,6 +364,13 @@ private fun SneakersPreview() {
 
 @Composable
 fun SneakerScreen(product: Product) {
+    var isLiked by remember { mutableStateOf(false) }
+    if (App.listOfFavorite.contains(Favorite(user_id = App.userId, product_id = product.id!!))){
+        isLiked = true
+    } else {
+        isLiked = false
+    }
+
 
     Column(
     ) {
@@ -388,13 +398,20 @@ fun SneakerScreen(product: Product) {
                         ) {
                             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                                 Icon(
-                                    painterResource(R.drawable.favoriteicon),
+                                    if(isLiked) painterResource(R.drawable.favoritefill) else painterResource(R.drawable.favoriteicon),
                                     null,
-                                    tint = Color.Unspecified,
+                                    tint = if(isLiked) red else Color.Unspecified,
                                     modifier = Modifier
                                         .size(16.dp)
                                         .clickable {
-
+                                            isLiked = !isLiked
+                                            if (isLiked){
+                                                mainViewModel.insertFavorite(Favorite(product_id = product.id!!, user_id = App.userId))
+                                                App.listOfFavorite.add(Favorite(product_id = product.id, user_id = App.userId))
+                                            } else {
+                                                mainViewModel.deleteFavorite(App.userId, product.id!!)
+                                                App.listOfFavorite.remove(Favorite(product_id = product.id, user_id = App.userId))
+                                            }
                                         }
                                 )
                             }

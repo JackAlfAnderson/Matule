@@ -13,6 +13,7 @@ class MainViewModel(val baseManager: BaseManager) : ViewModel() {
 
     val listOfProducts = MutableStateFlow(listOf<Product>())
     val isShow = MutableStateFlow(false)
+    val listOfFavorites = MutableStateFlow(listOf<Favorite>())
 
     fun getProducts() = viewModelScope.launch{
 
@@ -37,4 +38,14 @@ class MainViewModel(val baseManager: BaseManager) : ViewModel() {
         baseManager.insertFavorite(favorite)
     }
 
+    fun deleteFavorite(userId: String, productId: String) = viewModelScope.launch {
+        baseManager.deleteFavorite(userId,productId)
+    }
+
+    fun getFavoriteList(userId: String) = viewModelScope.launch {
+        listOfFavorites.update {
+            baseManager.getFavoriteList(userId)
+        }
+
+    }
 }
