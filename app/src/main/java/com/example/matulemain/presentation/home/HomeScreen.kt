@@ -168,7 +168,7 @@ fun HomeScreen(navController: NavController) {
                 if (listOfProducts.isNotEmpty()) {
                     LazyRow {
                         items(listOfProducts) { sneaker ->
-                            SneakerScreen(sneaker)
+                            SneakerScreen(sneaker, navController)
                             Spacer(Modifier.width(15.dp))
                         }
                     }
@@ -209,32 +209,9 @@ fun HomeScreen(navController: NavController) {
     }
 }
 
-@Preview
-@Composable
-private fun HomePreview() {
-    HomeScreen(rememberNavController())
-}
-
-
-@Preview
-@Composable
-private fun SneakersPreview() {
-    SneakerScreen(
-        Product(
-            null,
-            "Air Hueir Maksimus",
-            null,
-            null,
-            null,
-            true,
-            null,
-            null
-        )
-    )
-}
 
 @Composable
-fun SneakerScreen(product: Product) {
+fun SneakerScreen(product: Product, navController: NavController) {
     var isLiked by remember { mutableStateOf(false) }
     if (App.listOfFavorite.contains(Favorite(user_id = App.userId, product_id = product.id!!))){
         isLiked = true
@@ -244,6 +221,9 @@ fun SneakerScreen(product: Product) {
 
 
     Column(
+        modifier = Modifier.clickable {
+            navController.navigate("details")
+        }
     ) {
         Card(
             colors = CardDefaults.cardColors(

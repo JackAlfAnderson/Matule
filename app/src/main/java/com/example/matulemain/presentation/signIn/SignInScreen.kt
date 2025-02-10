@@ -50,7 +50,7 @@ fun SignInScreen(navController: NavController) {
 
     //values
     var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("asdas") }
+    var password by remember { mutableStateOf("") }
 
     //boolean
     var isEnabled by remember { mutableStateOf(false) }

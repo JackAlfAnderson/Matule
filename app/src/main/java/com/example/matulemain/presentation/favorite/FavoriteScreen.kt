@@ -118,7 +118,7 @@ fun FavoriteScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 items(listOfFavorite) {
-                    SneakerScreen(it)
+                    SneakerScreen(it, navController)
                 }
             }
         }

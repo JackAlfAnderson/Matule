@@ -219,7 +219,7 @@ fun CategoryScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 items(listOfCategoryShoes) {
-                    SneakerScreen(it)
+                    SneakerScreen(it, navController)
                 }
             }
 

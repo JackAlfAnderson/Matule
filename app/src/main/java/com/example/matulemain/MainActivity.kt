@@ -27,6 +27,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.matulemain.data.app.App
 import com.example.matulemain.data.supabase.MainViewModel
 import com.example.matulemain.presentation.category.CategoryScreen
+import com.example.matulemain.presentation.details.DetailsScreen
 import com.example.matulemain.presentation.favorite.FavoriteScreen
 import com.example.matulemain.presentation.home.HomeScreen
 import com.example.matulemain.presentation.onBoarding.OnBoardingScreen
@@ -87,6 +88,10 @@ class MainActivity : ComponentActivity() {
                         activeIcon = 2
                         isBottom = true
                         FavoriteScreen(navController)
+                    }
+                    composable(route = "details") {
+                        isBottom = false
+                        DetailsScreen(navController)
                     }
                 }
                 if(isBottom){

@@ -107,7 +107,7 @@ fun PopularScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 items(listOfProducts) {
-                    SneakerScreen(it)
+                    SneakerScreen(it, navController)
                 }
             }
         }
