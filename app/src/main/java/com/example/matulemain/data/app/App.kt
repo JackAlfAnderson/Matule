@@ -1,8 +1,8 @@
 package com.example.matulemain.data.app
 
 import android.app.Application
-import com.example.matulemain.data.domain.models.Favorite
-import com.example.matulemain.data.domain.models.Product
+import com.example.matulemain.domain.models.Favorite
+import com.example.matulemain.domain.models.Product
 import com.example.matulemain.data.supabase.BaseManager
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth

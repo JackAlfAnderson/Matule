@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.matulemain.R
-import com.example.matulemain.mainViewModel
+import com.example.matulemain.presentation.mainViewModel
 import com.example.matulemain.presentation.home.SneakerScreen
 import com.example.matulemain.ui.theme.back
 

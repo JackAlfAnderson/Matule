@@ -1,4 +1,4 @@
-package com.example.matulemain
+package com.example.matulemain.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.matulemain.R
 import com.example.matulemain.data.app.App
 import com.example.matulemain.data.supabase.MainViewModel
 import com.example.matulemain.presentation.category.CategoryScreen

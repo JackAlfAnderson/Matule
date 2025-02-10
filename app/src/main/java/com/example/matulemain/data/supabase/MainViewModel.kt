@@ -3,8 +3,8 @@ package com.example.matulemain.data.supabase
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.matulemain.data.domain.models.Favorite
-import com.example.matulemain.data.domain.models.Product
+import com.example.matulemain.domain.models.Favorite
+import com.example.matulemain.domain.models.Product
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch

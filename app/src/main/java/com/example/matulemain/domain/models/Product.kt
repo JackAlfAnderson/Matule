@@ -1,4 +1,4 @@
-package com.example.matulemain.data.domain.models
+package com.example.matulemain.domain.models
 
 import kotlinx.serialization.Serializable
 
