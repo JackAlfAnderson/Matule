@@ -1,6 +1,5 @@
-package com.example.matulemain.presentation.popularScreen
+package com.example.matulemain.presentation.favorite
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,35 +34,39 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.matulemain.R
 import com.example.matulemain.data.app.App
-import com.example.matulemain.data.domain.models.Favorite
 import com.example.matulemain.data.domain.models.Product
 import com.example.matulemain.mainViewModel
 import com.example.matulemain.presentation.home.SneakerScreen
 import com.example.matulemain.ui.theme.back
-import com.example.matulemain.ui.theme.mainColor
+import com.example.matulemain.ui.theme.red
 
 @Composable
-fun PopularScreen() {
+fun FavoriteScreen(navController: NavController) {
+
+    var listOfFavorite by remember { mutableStateOf(listOf<Product>()) }
 
     LaunchedEffect(Unit) {
-        mainViewModel.getProducts()
+        mainViewModel.getFavoriteList(App.userId)
     }
 
-    val listOfProducts by mainViewModel.listOfProducts.collectAsState()
 
-
+    val listOfFav by mainViewModel.listOfFavorites.collectAsState()
+    listOfFavorite = listOfFav
     Column(
         Modifier.fillMaxSize().background(back)
     ) {
         Column(
             Modifier.padding(20.dp)
         ) {
+            Spacer(Modifier.height(20.dp))
             Box(contentAlignment = Alignment.Center) {
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Text(
-                        "Популярное",
+                        "Избранное",
                         fontSize = 16.sp,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
@@ -75,7 +78,7 @@ fun PopularScreen() {
                         null,
                         tint = Color.Unspecified,
                         modifier = Modifier.clickable {
-
+                            navController.navigate("home")
                         }
                     )
                 }
@@ -91,9 +94,9 @@ fun PopularScreen() {
                     ) {
                         Column(Modifier.fillMaxSize(),verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(
-                                painterResource(R.drawable.heart),
+                                painterResource(R.drawable.favoritefill),
                                 null,
-                                tint = Color.Unspecified,
+                                tint = red,
                                 modifier = Modifier
                                     .size(28.dp)
                                     .clickable {
@@ -114,7 +117,7 @@ fun PopularScreen() {
                 verticalArrangement = Arrangement.spacedBy(15.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(listOfProducts) {
+                items(listOfFavorite) {
                     SneakerScreen(it)
                 }
             }
@@ -122,8 +125,9 @@ fun PopularScreen() {
     }
 }
 
+
 @Preview
 @Composable
-private fun PopularPreview() {
-    PopularScreen()
+private fun FavoritePreview() {
+    FavoriteScreen(rememberNavController())
 }

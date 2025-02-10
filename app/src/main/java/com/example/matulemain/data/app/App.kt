@@ -18,6 +18,7 @@ class App() : Application() {
         var chosenCategory = 0
         var userId = "1c209d33-174e-434c-a4ca-4e46ef8fe855"
         var listOfFavorite = mutableListOf<Favorite>()
+        var activeIcon = 1
     }
 
     override fun onCreate() {

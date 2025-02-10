@@ -41,12 +41,13 @@ import com.example.matulemain.R
 import com.example.matulemain.data.app.App
 import com.example.matulemain.data.domain.models.Product
 import com.example.matulemain.data.supabase.MainViewModel
+import com.example.matulemain.mainViewModel
 import com.example.matulemain.presentation.home.SneakerScreen
 import com.example.matulemain.ui.theme.accent
 import com.example.matulemain.ui.theme.back
 
 @Composable
-fun CategoryScreen(mainViewModel: MainViewModel, navController: NavController) {
+fun CategoryScreen(navController: NavController) {
 
     val categories = listOf(
         "Все",

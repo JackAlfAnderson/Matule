@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import com.example.matulemain.R
 import com.example.matulemain.data.app.App
@@ -53,7 +54,7 @@ import com.example.matulemain.ui.theme.mainColor
 import com.example.matulemain.ui.theme.red
 
 @Composable
-fun HomeScreen(mainViewModel: MainViewModel, navController: NavController) {
+fun HomeScreen(navController: NavController) {
 
     val categories = listOf(
         "Все",
@@ -211,137 +212,7 @@ fun HomeScreen(mainViewModel: MainViewModel, navController: NavController) {
 @Preview
 @Composable
 private fun HomePreview() {
-    val categories = listOf(
-        "Все",
-        "outdoor",
-        "tennis"
-    )
-
-
-    Column(
-        modifier = Modifier
-            .background(back)
-            .fillMaxSize()
-    ) {
-        Column(
-            Modifier
-                .padding(20.dp)
-                .fillMaxSize()
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    Icon(
-                        painterResource(R.drawable.mainhighlight),
-                        null,
-                        tint = Color.Unspecified,
-                        modifier = Modifier.padding(end = 130.dp, bottom = 30.dp)
-                    )
-                    Text(
-                        "Главная",
-                        fontSize = 32.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-                Box(Modifier.fillMaxWidth()) {
-                    Icon(
-                        painterResource(R.drawable.hamburger),
-                        null,
-                        tint = Color.Unspecified
-                    )
-                }
-                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                    Icon(
-                        painterResource(R.drawable.bagnotifiedicon),
-                        null,
-                        tint = Color.Unspecified
-                    )
-                }
-            }
-            Column(
-
-            ) {
-                Spacer(Modifier.height(21.dp))
-                Box(Modifier.fillMaxWidth()) {
-                    Box(Modifier.fillMaxWidth()) {
-                        Icon(
-                            painterResource(R.drawable.searchbutton),
-                            null,
-                            tint = Color.Unspecified
-                        )
-                    }
-                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                        Icon(painterResource(R.drawable.settings), null, tint = Color.Unspecified)
-                    }
-                }
-                Spacer(Modifier.height(22.dp))
-                Text("Категории", fontSize = 16.sp)
-                Spacer(Modifier.height(19.dp))
-                LazyRow {
-                    items(categories) { category ->
-                        Spacer(Modifier.width(16.dp))
-                    }
-                }
-                Spacer(Modifier.height(24.dp))
-                Row {
-                    Text("Популярное", fontSize = 16.sp)
-                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                        Text("Все", fontSize = 16.sp, color = accent)
-                    }
-                }
-                Spacer(Modifier.height(30.dp))
-                LazyRow {
-                    item() {
-                        SneakerScreen(
-                            Product(
-                                null,
-                                "Air Hueir Maksimus",
-                                null,
-                                null,
-                                null,
-                                true,
-                                null,
-                                null
-                            )
-                        )
-                    }
-                    item {
-                        SneakerScreen(
-                            Product(
-                                null,
-                                "Air Hueir Maksimus",
-                                null,
-                                null,
-                                null,
-                                true,
-                                null,
-                                null
-                            )
-                        )
-                    }
-                }
-                Spacer(Modifier.height(24.dp))
-                Row {
-                    Text("Акции", fontSize = 16.sp)
-                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                        Text("Все", fontSize = 16.sp, color = accent)
-                    }
-                }
-                Spacer(Modifier.height(20.dp))
-                Column(
-                    Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painterResource(R.drawable.akciaimage),
-                        null,
-                        modifier = Modifier.size(width = 335.dp, height = 95.dp)
-                    )
-                }
-            }
-
-        }
-    }
+    HomeScreen(rememberNavController())
 }
 
 

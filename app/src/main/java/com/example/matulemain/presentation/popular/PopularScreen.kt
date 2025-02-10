@@ -1,4 +1,4 @@
-package com.example.matulemain.presentation.favoriteScreen
+package com.example.matulemain.presentation.popular
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,37 +23,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.matulemain.R
-import com.example.matulemain.data.app.App
-import com.example.matulemain.data.domain.models.Favorite
-import com.example.matulemain.data.domain.models.Product
 import com.example.matulemain.mainViewModel
 import com.example.matulemain.presentation.home.SneakerScreen
 import com.example.matulemain.ui.theme.back
 
 @Composable
-fun FavoriteScreen() {
-
-    var listOfFavorite by remember { mutableStateOf(listOf<Product>()) }
+fun PopularScreen(navController: NavController) {
 
     LaunchedEffect(Unit) {
-        mainViewModel.getFavoriteList(App.userId)
+        mainViewModel.getProducts()
     }
 
+    val listOfProducts by mainViewModel.listOfProducts.collectAsState()
 
-    val listOfFav by mainViewModel.listOfFavorites.collectAsState()
-    listOfFavorite = listOfFav
+
     Column(
         Modifier.fillMaxSize().background(back)
     ) {
@@ -63,7 +55,7 @@ fun FavoriteScreen() {
             Box(contentAlignment = Alignment.Center) {
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Text(
-                        "Избранное",
+                        "Популярное",
                         fontSize = 16.sp,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
@@ -75,7 +67,7 @@ fun FavoriteScreen() {
                         null,
                         tint = Color.Unspecified,
                         modifier = Modifier.clickable {
-
+                            navController.navigate("home")
                         }
                     )
                 }
@@ -97,7 +89,7 @@ fun FavoriteScreen() {
                                 modifier = Modifier
                                     .size(28.dp)
                                     .clickable {
-
+                                        navController.navigate("favorite")
                                     }
                             )
                         }
@@ -114,17 +106,10 @@ fun FavoriteScreen() {
                 verticalArrangement = Arrangement.spacedBy(15.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(listOfFavorite) {
+                items(listOfProducts) {
                     SneakerScreen(it)
                 }
             }
         }
     }
-}
-
-
-@Preview
-@Composable
-private fun FavoritePreview() {
-    FavoriteScreen()
 }
