@@ -41,6 +41,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.example.matulemain.R
+import com.example.matulemain.data.app.App
+import com.example.matulemain.domain.models.Cart
 import com.example.matulemain.domain.models.Product
 import com.example.matulemain.presentation.mainViewModel
 import com.example.matulemain.ui.theme.accent
@@ -175,6 +177,10 @@ fun DetailsScreen(navController: NavController) {
                 ),
                 onClick = {
                     isAdd = !isAdd
+                    if (!App.listOfCart.contains(Cart(user_id = App.userId, product_id = listOfProducts[pagerState.currentPage].id, quantity = 1))){
+                        mainViewModel.insertCart(Cart(user_id = App.userId, product_id = listOfProducts[pagerState.currentPage].id, quantity = 1))
+                        App.listOfCart.add(Cart(user_id = App.userId, product_id = listOfProducts[pagerState.currentPage].id, quantity = 1))
+                    }
                 },
                 modifier = Modifier
                     .height(52.dp)

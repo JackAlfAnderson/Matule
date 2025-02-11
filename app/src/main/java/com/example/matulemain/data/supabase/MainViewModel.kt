@@ -3,6 +3,7 @@ package com.example.matulemain.data.supabase
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.matulemain.domain.models.Cart
 import com.example.matulemain.domain.models.Favorite
 import com.example.matulemain.domain.models.Product
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,20 +12,21 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(val baseManager: BaseManager) : ViewModel() {
 
+    //APP VALUES
+
     val listOfProducts = MutableStateFlow(listOf<Product>())
     val isShow = MutableStateFlow(false)
     val listOfFavorites = MutableStateFlow(listOf<Product>())
+    val listOfCart = MutableStateFlow(listOf<Product>())
 
+
+    //PRODUCTS
     fun getProducts() = viewModelScope.launch{
 
         isShow.update {
             true
         }
-        Log.d("prod", "я запустился два")
         val prod = baseManager.getProducts()
-        Log.d("prod", "я запустился пять")
-
-
         listOfProducts.update {
             prod
         }
@@ -33,6 +35,29 @@ class MainViewModel(val baseManager: BaseManager) : ViewModel() {
             false
         }
     }
+
+    //CART
+
+    fun getCartList(userId: String) = viewModelScope.launch {
+        listOfCart.update {
+            baseManager.getCartList(userId)
+        }
+
+    }
+
+    fun insertCart(cart: Cart) = viewModelScope.launch {
+        baseManager.insertCart(cart)
+    }
+
+    fun deleteCart(cart: Cart) = viewModelScope.launch {
+        baseManager.deleteCart(cart)
+    }
+
+    fun increaseQuantity(cart: Cart) = viewModelScope.launch {
+        baseManager.increaseQuantity(cart)
+    }
+
+    //FAVORITE
 
     fun insertFavorite(favorite: Favorite) = viewModelScope.launch{
         baseManager.insertFavorite(favorite)

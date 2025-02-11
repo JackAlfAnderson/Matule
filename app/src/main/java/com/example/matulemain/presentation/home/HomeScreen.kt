@@ -41,6 +41,7 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.example.matulemain.R
 import com.example.matulemain.data.app.App
+import com.example.matulemain.domain.models.Cart
 import com.example.matulemain.domain.models.Favorite
 import com.example.matulemain.domain.models.Product
 import com.example.matulemain.presentation.mainViewModel
@@ -61,7 +62,6 @@ fun HomeScreen(navController: NavController) {
     )
 
     LaunchedEffect(Unit) {
-        Log.d("prod", "я запустился раз")
         mainViewModel.getProducts()
     }
 
@@ -305,6 +305,10 @@ fun SneakerScreen(product: Product, navController: NavController) {
                             null,
                             tint = Color.Unspecified,
                             modifier = Modifier.clickable {
+                                if (!App.listOfCart.contains(Cart(user_id = App.userId, product_id = product.id, quantity = 1))){
+                                    mainViewModel.insertCart(Cart(user_id = App.userId, product_id = product.id, quantity = 1))
+                                    App.listOfCart.add(Cart(user_id = App.userId, product_id = product.id, quantity = 1))
+                                }
                             }
                         )
                     }
