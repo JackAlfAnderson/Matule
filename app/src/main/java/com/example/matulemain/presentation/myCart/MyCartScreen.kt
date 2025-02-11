@@ -1,5 +1,6 @@
 package com.example.matulemain.presentation.myCart
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,6 +30,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -53,9 +59,12 @@ fun MyCartScreen(navController: NavController) {
 
     LaunchedEffect(Unit) {
         mainViewModel.getCartList(App.userId)
+
     }
 
     val listOfCartProducts by mainViewModel.listOfCart.collectAsState()
+
+    val itogo by remember { mutableStateOf(0.0) }
 
     Column(
         Modifier
@@ -86,11 +95,12 @@ fun MyCartScreen(navController: NavController) {
                 }
             }
             Spacer(Modifier.height(20.dp))
-            Text("3 товара")
+            Text("${listOfCartProducts.size} товара")
             Spacer(Modifier.height(16.dp))
             LazyColumn {
                 items(listOfCartProducts) {
-                    CartItem(it)
+                    //CartItem(it)
+                    CartSneakerItem(it)
                 }
             }
         }
@@ -109,13 +119,13 @@ fun MyCartScreen(navController: NavController) {
                     Text("Сумма", fontSize = 16.sp, color = Color(0xFF707B81))
                 }
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                    Text("₽131", fontSize = 16.sp)
+                    PriceText(itogo.toString())
                 }
             }
             Spacer(Modifier.height(10.dp))
             Box {
                 Box(Modifier.fillMaxWidth()) {
-                    Text("Сумма", fontSize = 16.sp, color = Color(0xFF707B81))
+                    Text("Доставка", fontSize = 16.sp, color = Color(0xFF707B81))
                 }
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                     Text(
@@ -133,7 +143,7 @@ fun MyCartScreen(navController: NavController) {
                                     fontSize = 14.sp,
                                 )
                             ) {
-                                append("123")
+                                append("60.20")
                             }
                         },
                     )
@@ -148,10 +158,10 @@ fun MyCartScreen(navController: NavController) {
             Spacer(Modifier.height(15.dp))
             Box {
                 Box(Modifier.fillMaxWidth()) {
-                    Text("Сумма", fontSize = 16.sp)
+                    Text("Итого", fontSize = 16.sp)
                 }
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                    Text("₽131", fontSize = 16.sp, color = accent)
+                    PriceText((itogo + 60.20).toString())
                 }
             }
             Spacer(Modifier.height(32.dp))
@@ -174,44 +184,135 @@ fun MyCartScreen(navController: NavController) {
 }
 
 @Composable
-fun CartItem(product: Product) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier.padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+fun CartSneakerItem(product: Product) {
+    val pager = listOf(
+        "1",
+        "2",
+        "3"
+    )
+
+    val pagerState = PagerState { pager.size }
+
+    LaunchedEffect(Unit) {
+        pagerState.animateScrollToPage(1)
+    }
+
+    HorizontalPager(
+        pagerState
+    ) { page ->
+        when (page) {
+            0 -> CartItemLeft(product)
+            1 -> CartItem(product)
+            2 -> CartItem(product)
+        }
+    }
+
+}
+
+@Composable
+fun CartItemLeft(product: Product) {
+    Row(Modifier.padding(bottom = 15.dp)) {
+        Card(
+            colors = CardDefaults.cardColors(
+                containerColor = accent
+            ),
+            modifier = Modifier
+                .height(104.dp)
+                .width(58.dp),
+            shape = RoundedCornerShape(14.dp)
         ) {
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = back
-                ),
-                modifier = Modifier.size(87.dp)
-            ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    AsyncImage(
-                        model = product.image,
-                        null,
-                        modifier = Modifier
-                            .width(86.dp)
-                            .height(55.dp)
-                    )
-                }
+            Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(painter = painterResource(R.drawable.plusicon), tint = Color.White, contentDescription = null, modifier = Modifier.clickable { })
+                Spacer(Modifier.height(11.dp))
+                Text("1")
+                Spacer(Modifier.height(11.dp))
+                Icon(painter = painterResource(R.drawable.minusicon), tint = Color.White, contentDescription = null, modifier = Modifier.clickable { })
 
             }
-            Spacer(Modifier.width(30.dp))
+        }
+        Spacer(Modifier.width(10.dp))
+        Card(
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            ),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier.padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = back
+                    ),
+                    modifier = Modifier.size(87.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                        AsyncImage(
+                            model = product.image,
+                            null,
+                            modifier = Modifier
+                                .width(86.dp)
+                                .height(55.dp)
+                        )
+                    }
 
-            Column(Modifier.padding(bottom = 20.dp)) {
-                Text(product.name.toString())
-                Spacer(Modifier.height(6.dp))
-                PriceText(product.price.toString())
+                }
+                Spacer(Modifier.width(30.dp))
+
+                Column(Modifier.padding(bottom = 20.dp)) {
+                    Text(product.name.toString())
+                    Spacer(Modifier.height(6.dp))
+                    PriceText(product.price.toString())
+                }
             }
         }
     }
+}
+
+@Composable
+fun CartItem(product: Product) {
+    Column(Modifier.padding(bottom = 15.dp)) {
+        Card(
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            ),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier.padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = back
+                    ),
+                    modifier = Modifier.size(87.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                        AsyncImage(
+                            model = product.image,
+                            null,
+                            modifier = Modifier
+                                .width(86.dp)
+                                .height(55.dp)
+                        )
+                    }
+
+                }
+                Spacer(Modifier.width(30.dp))
+
+                Column(Modifier.padding(bottom = 20.dp)) {
+                    Text(product.name.toString())
+                    Spacer(Modifier.height(6.dp))
+                    PriceText(product.price.toString())
+                }
+            }
+        }
+    }
+
 }
 
 @Composable
@@ -227,7 +328,7 @@ fun PriceText(price: String) {
             }
             withStyle(
                 SpanStyle(
-                    fontSize = 14.sp
+                    fontSize = 12.sp
                 )
             ) {
                 append(price)

@@ -45,6 +45,7 @@ import com.example.matulemain.domain.models.Cart
 import com.example.matulemain.domain.models.Favorite
 import com.example.matulemain.domain.models.Product
 import com.example.matulemain.presentation.mainViewModel
+import com.example.matulemain.presentation.search.SearchScreen
 import com.example.matulemain.ui.theme.accent
 import com.example.matulemain.ui.theme.back
 import com.example.matulemain.ui.theme.hint
@@ -123,7 +124,7 @@ fun HomeScreen(navController: NavController) {
                             modifier = Modifier
                                 .width(269.dp)
                                 .clickable {
-
+                                    navController.navigate("search")
                                 }
                         )
                     }

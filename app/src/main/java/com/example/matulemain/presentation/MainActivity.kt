@@ -34,6 +34,7 @@ import com.example.matulemain.presentation.home.HomeScreen
 import com.example.matulemain.presentation.myCart.MyCartScreen
 import com.example.matulemain.presentation.onBoarding.OnBoardingScreen
 import com.example.matulemain.presentation.popular.PopularScreen
+import com.example.matulemain.presentation.search.SearchScreen
 import com.example.matulemain.presentation.signIn.SignInScreen
 import com.example.matulemain.presentation.splash.SplashScreen
 import com.example.matulemain.ui.theme.MatuleMainTheme
@@ -98,6 +99,10 @@ class MainActivity : ComponentActivity() {
                     composable(route = "myCart"){
                         isBottom = false
                         MyCartScreen(navController)
+                    }
+                    composable(route = "search") {
+                        isBottom = false
+                        SearchScreen(navController)
                     }
                 }
                 if(isBottom){
