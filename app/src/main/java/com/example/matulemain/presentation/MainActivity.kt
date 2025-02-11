@@ -31,6 +31,7 @@ import com.example.matulemain.presentation.category.CategoryScreen
 import com.example.matulemain.presentation.details.DetailsScreen
 import com.example.matulemain.presentation.favorite.FavoriteScreen
 import com.example.matulemain.presentation.home.HomeScreen
+import com.example.matulemain.presentation.myCart.MyCartScreen
 import com.example.matulemain.presentation.onBoarding.OnBoardingScreen
 import com.example.matulemain.presentation.popular.PopularScreen
 import com.example.matulemain.presentation.signIn.SignInScreen
@@ -94,6 +95,10 @@ class MainActivity : ComponentActivity() {
                         isBottom = false
                         DetailsScreen(navController)
                     }
+                    composable(route = "myCart"){
+                        isBottom = false
+                        MyCartScreen(navController)
+                    }
                 }
                 if(isBottom){
 
@@ -104,7 +109,9 @@ class MainActivity : ComponentActivity() {
                             tint = Color.Unspecified,
                             modifier = Modifier
                                 .padding(bottom = 20.dp)
-                                .clickable { }
+                                .clickable {
+                                    navController.navigate("myCart")
+                                }
                         )
                         Icon(
                             painter = painterResource(R.drawable.bottomnavigation),
