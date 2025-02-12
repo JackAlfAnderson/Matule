@@ -1,6 +1,5 @@
 package com.example.matulemain.data.supabase
 
-import android.util.Log
 import com.example.matulemain.domain.models.Cart
 import com.example.matulemain.domain.models.Favorite
 import com.example.matulemain.domain.models.Product
@@ -33,6 +32,17 @@ class BaseManager(val supabaseClient: SupabaseClient) {
         return productList
     }
 
+    suspend fun getCartById(cart: Cart) : Cart{
+        val foundCart = supabaseClient.postgrest["cart"].select {
+            filter {
+                eq("user_id", cart.user_id.toString())
+                eq("product_id", cart.product_id.toString())
+            }
+        }.decodeSingle<Cart>()
+
+        return foundCart
+    }
+
     suspend fun insertCart(cart: Cart) {
         supabaseClient.postgrest["cart"].insert(cart)
     }
@@ -46,7 +56,7 @@ class BaseManager(val supabaseClient: SupabaseClient) {
         }
     }
 
-    suspend fun increaseQuantity(cart: Cart) {
+    suspend fun setQuantity(cart: Cart) {
         supabaseClient.postgrest["cart"].update(
             {
                 set("quantity", cart.quantity)

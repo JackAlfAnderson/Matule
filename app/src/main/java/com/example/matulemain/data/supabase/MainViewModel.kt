@@ -1,6 +1,5 @@
 package com.example.matulemain.data.supabase
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.matulemain.domain.models.Cart
@@ -18,6 +17,7 @@ class MainViewModel(val baseManager: BaseManager) : ViewModel() {
     val isShow = MutableStateFlow(false)
     val listOfFavorites = MutableStateFlow(listOf<Product>())
     val listOfCart = MutableStateFlow(listOf<Product>())
+    val foundCart = MutableStateFlow(Cart(null,null,null,null))
 
 
     //PRODUCTS
@@ -45,6 +45,12 @@ class MainViewModel(val baseManager: BaseManager) : ViewModel() {
 
     }
 
+    fun findCartById(cart: Cart) = viewModelScope.launch{
+        foundCart.update {
+            baseManager.getCartById(cart)
+        }
+    }
+
     fun insertCart(cart: Cart) = viewModelScope.launch {
         baseManager.insertCart(cart)
     }
@@ -53,8 +59,8 @@ class MainViewModel(val baseManager: BaseManager) : ViewModel() {
         baseManager.deleteCart(cart)
     }
 
-    fun increaseQuantity(cart: Cart) = viewModelScope.launch {
-        baseManager.increaseQuantity(cart)
+    fun setQuantity(cart: Cart) = viewModelScope.launch {
+        baseManager.setQuantity(cart)
     }
 
     //FAVORITE

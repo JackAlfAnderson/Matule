@@ -210,13 +210,9 @@ fun HomeScreen(navController: NavController) {
 
 @Composable
 fun SneakerScreen(product: Product, navController: NavController) {
-    var isLiked by remember { mutableStateOf(false) }
-    if (App.listOfFavorite.contains(Favorite(user_id = App.userId, product_id = product.id!!))){
-        isLiked = true
-    } else {
-        isLiked = false
+    var isLiked by remember(product.id) {
+        mutableStateOf(App.listOfFavorite.contains(Favorite(user_id = App.userId, product_id = product.id!!)))
     }
-
 
     Column(
         modifier = Modifier.clickable {

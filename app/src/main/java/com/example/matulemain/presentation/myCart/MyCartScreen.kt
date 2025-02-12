@@ -1,6 +1,5 @@
 package com.example.matulemain.presentation.myCart
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,14 +44,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import com.example.matulemain.R
 import com.example.matulemain.data.app.App
+import com.example.matulemain.domain.models.Cart
 import com.example.matulemain.domain.models.Product
 import com.example.matulemain.presentation.mainViewModel
 import com.example.matulemain.ui.theme.accent
 import com.example.matulemain.ui.theme.back
+import com.example.matulemain.ui.theme.red
+import kotlinx.coroutines.delay
 
 @Composable
 fun MyCartScreen(navController: NavController) {
@@ -102,7 +103,11 @@ fun MyCartScreen(navController: NavController) {
                     //CartItem(it)
                     CartSneakerItem(it)
                 }
+                item {
+                    Spacer(Modifier.height(250.dp))
+                }
             }
+
         }
     }
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
@@ -201,41 +206,22 @@ fun CartSneakerItem(product: Product) {
         pagerState
     ) { page ->
         when (page) {
-            0 -> CartItemLeft(product)
+            0 -> CartItemLeft(product, pagerState)
             1 -> CartItem(product)
-            2 -> CartItem(product)
+            2 -> CartItemRight(product, pagerState)
         }
     }
 
 }
 
 @Composable
-fun CartItemLeft(product: Product) {
+fun CartItemRight(product: Product, pagerState: PagerState) {
     Row(Modifier.padding(bottom = 15.dp)) {
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = accent
-            ),
-            modifier = Modifier
-                .height(104.dp)
-                .width(58.dp),
-            shape = RoundedCornerShape(14.dp)
-        ) {
-            Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-                Icon(painter = painterResource(R.drawable.plusicon), tint = Color.White, contentDescription = null, modifier = Modifier.clickable { })
-                Spacer(Modifier.height(11.dp))
-                Text("1")
-                Spacer(Modifier.height(11.dp))
-                Icon(painter = painterResource(R.drawable.minusicon), tint = Color.White, contentDescription = null, modifier = Modifier.clickable { })
-
-            }
-        }
-        Spacer(Modifier.width(10.dp))
         Card(
             colors = CardDefaults.cardColors(
                 containerColor = Color.White
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.size(267.dp, 104.dp)
         ) {
             Row(
                 modifier = Modifier.padding(10.dp),
@@ -262,7 +248,160 @@ fun CartItemLeft(product: Product) {
                 Spacer(Modifier.width(30.dp))
 
                 Column(Modifier.padding(bottom = 20.dp)) {
-                    Text(product.name.toString())
+                    Text(product.name!!.take(11) + "...")
+                    Spacer(Modifier.height(6.dp))
+                    PriceText(product.price.toString())
+                }
+            }
+        }
+        Spacer(Modifier.width(10.dp))
+        Column {
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = red
+                ),
+                modifier = Modifier
+                    .height(104.dp)
+                    .width(58.dp)
+                    .clickable {
+                        mainViewModel.deleteCart(
+                            Cart(
+                                user_id = App.userId,
+                                product_id = product.id,
+                                quantity = 1
+                            )
+                        )
+                        val cartToRemove = App.listOfCart.find { cart ->
+                            cart.user_id == App.userId && cart.product_id == App.userId
+                        }
+
+                        if (cartToRemove != null) {
+                            App.listOfCart.remove(cartToRemove)
+                        }
+                    },
+                shape = RoundedCornerShape(14.dp)
+            ) {
+                Column(
+                    Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.trashicon),
+                        tint = Color.White,
+                        contentDescription = null
+                    )
+
+                }
+            }
+        }
+
+    }
+}
+
+@Composable
+fun CartItemLeft(product: Product, pagerState: PagerState) {
+
+    val cartToRemove = App.listOfCart.find { cart ->
+        cart.user_id == App.userId && cart.product_id == App.userId
+    }
+
+    if (App.listOfCart.contains(cartToRemove)) {
+        LaunchedEffect(Unit) {
+            mainViewModel.findCartById(
+                Cart(
+                    product_id = product.id,
+                    user_id = App.userId,
+                    quantity = null
+                )
+            )
+        }
+    }
+
+    val foundCart by mainViewModel.foundCart.collectAsState()
+    var quantity by remember { mutableStateOf(0) }
+    quantity = if (foundCart.quantity != null) foundCart.quantity!! else 0
+
+    LaunchedEffect(Unit) {
+        while (true){
+            delay(1000)
+            mainViewModel.setQuantity(Cart(id = foundCart.id, user_id = App.userId, product_id = product.id, quantity))
+        }
+
+    }
+
+    Row(Modifier.padding(bottom = 15.dp)) {
+        Card(
+            colors = CardDefaults.cardColors(
+                containerColor = accent
+            ),
+            modifier = Modifier
+                .height(104.dp)
+                .width(58.dp),
+            shape = RoundedCornerShape(14.dp)
+        ) {
+            Column(
+                Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.plusicon),
+                    tint = Color.White,
+                    contentDescription = null,
+                    modifier = Modifier.clickable {
+                        quantity++
+                    }
+                )
+                Spacer(Modifier.height(11.dp))
+                Text(quantity.toString(), color = Color.White, fontSize = 12.sp)
+                Spacer(Modifier.height(11.dp))
+                Icon(
+                    painter = painterResource(R.drawable.minusicon),
+                    tint = Color.White,
+                    contentDescription = null,
+                    modifier = Modifier.clickable {
+                        if (quantity > 1){
+                            quantity--
+                        }
+                    }
+                )
+
+            }
+        }
+        Spacer(Modifier.width(10.dp))
+        Card(
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            ),
+            modifier = Modifier.size(267.dp, 104.dp)
+        ) {
+            Row(
+                modifier = Modifier.padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = back
+                    ),
+                    modifier = Modifier.size(87.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                        AsyncImage(
+                            model = product.image,
+                            null,
+                            modifier = Modifier
+                                .width(86.dp)
+                                .height(55.dp)
+                        )
+                    }
+
+                }
+                Spacer(Modifier.width(30.dp))
+
+                Column(Modifier.padding(bottom = 20.dp)) {
+                    Text(product.name!!.take(11) + "...")
                     Spacer(Modifier.height(6.dp))
                     PriceText(product.price.toString())
                 }
