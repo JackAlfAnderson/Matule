@@ -1,6 +1,5 @@
 package com.example.matulemain.data.supabase
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.matulemain.domain.models.Cart
@@ -17,13 +16,12 @@ class MainViewModel(val baseManager: BaseManager) : ViewModel() {
     val listOfProducts = MutableStateFlow(listOf<Product>())
     val isShow = MutableStateFlow(false)
     val listOfFavorites = MutableStateFlow(listOf<Product>())
-    val listOfCart = MutableStateFlow(listOf<Product>())
-    val foundCart = MutableStateFlow(Cart(null,null,null,null))
-    val listOfFoundCart = MutableStateFlow(listOf<Cart>())
+    val listOfCart = MutableStateFlow(listOf<Cart>())
+    val listOfCartProducts = MutableStateFlow(listOf<Product>())
 
 
     //PRODUCTS
-    fun getProducts() = viewModelScope.launch{
+    fun getProducts() = viewModelScope.launch {
 
         isShow.update {
             true
@@ -40,17 +38,19 @@ class MainViewModel(val baseManager: BaseManager) : ViewModel() {
 
     //CART
 
+    fun updateQuantity(userId: String, productId: String, newQuantity: Int) = viewModelScope.launch {
+        baseManager.updateQuantity(userId, productId, newQuantity)
+    }
+
+    fun getCartProductsList(userId: String) = viewModelScope.launch {
+        listOfCartProducts.update {
+            baseManager.getCartProductsList(userId)
+        }
+    }
+
     fun getCartList(userId: String) = viewModelScope.launch {
         listOfCart.update {
             baseManager.getCartList(userId)
-
-        }
-
-    }
-
-    fun findCartById(cart: Cart) = viewModelScope.launch{
-        foundCart.update {
-            baseManager.getCartById(cart)
         }
     }
 
@@ -62,18 +62,15 @@ class MainViewModel(val baseManager: BaseManager) : ViewModel() {
         baseManager.deleteCart(cart)
     }
 
-    fun setQuantity(cart: Cart) = viewModelScope.launch {
-        baseManager.setQuantity(cart)
-    }
 
     //FAVORITE
 
-    fun insertFavorite(favorite: Favorite) = viewModelScope.launch{
+    fun insertFavorite(favorite: Favorite) = viewModelScope.launch {
         baseManager.insertFavorite(favorite)
     }
 
     fun deleteFavorite(userId: String, productId: String) = viewModelScope.launch {
-        baseManager.deleteFavorite(userId,productId)
+        baseManager.deleteFavorite(userId, productId)
     }
 
     fun getFavoriteList(userId: String) = viewModelScope.launch {

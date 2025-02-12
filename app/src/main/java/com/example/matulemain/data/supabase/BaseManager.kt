@@ -11,7 +11,7 @@ class BaseManager(val supabaseClient: SupabaseClient) {
 
     //CART
 
-    suspend fun getCartList(userId: String): List<Product> {
+    suspend fun getCartProductsList(userId: String): List<Product> {
         val cartList = supabaseClient.postgrest["cart"].select {
             filter {
                 eq("user_id", userId)
@@ -32,15 +32,38 @@ class BaseManager(val supabaseClient: SupabaseClient) {
         return productList
     }
 
-    suspend fun getCartById(cart: Cart) : Cart{
-        val foundCart = supabaseClient.postgrest["cart"].select {
+    suspend fun getCartList(userId: String): List<Cart> {
+        val cartList = supabaseClient.postgrest["cart"].select {
             filter {
-                eq("user_id", cart.user_id.toString())
-                eq("product_id", cart.product_id.toString())
+                eq("user_id", userId)
+            }
+        }.decodeList<Cart>()
+
+        return cartList
+    }
+
+    suspend fun getQuantity(userId: String, productId: String) : Int{
+        val cart = supabaseClient.postgrest["cart"].select {
+            filter {
+                eq("user_id",userId)
+                eq("product_id", productId)
             }
         }.decodeSingle<Cart>()
 
-        return foundCart
+        return cart.quantity!!
+    }
+
+    suspend fun updateQuantity(userId: String, productId: String, newQuantity: Int) {
+        supabaseClient.postgrest["cart"].update(
+            {
+                set("quantity", newQuantity)
+            }
+        ) {
+            filter {
+                eq("user_id",userId)
+                eq("product_id", productId)
+            }
+        }
     }
 
     suspend fun insertCart(cart: Cart) {
@@ -56,18 +79,6 @@ class BaseManager(val supabaseClient: SupabaseClient) {
         }
     }
 
-    suspend fun setQuantity(cart: Cart) {
-        supabaseClient.postgrest["cart"].update(
-            {
-                set("quantity", cart.quantity)
-            }
-        ) {
-            filter {
-                eq("user_id", cart.user_id.toString())
-                eq("product_id", cart.product_id.toString())
-            }
-        }
-    }
 
     //PRODUCTS
     suspend fun getProducts(): List<Product> {

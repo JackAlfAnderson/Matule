@@ -1,6 +1,5 @@
 package com.example.matulemain.presentation.home
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,7 +44,6 @@ import com.example.matulemain.domain.models.Cart
 import com.example.matulemain.domain.models.Favorite
 import com.example.matulemain.domain.models.Product
 import com.example.matulemain.presentation.mainViewModel
-import com.example.matulemain.presentation.search.SearchScreen
 import com.example.matulemain.ui.theme.accent
 import com.example.matulemain.ui.theme.back
 import com.example.matulemain.ui.theme.hint
@@ -214,6 +212,8 @@ fun SneakerScreen(product: Product, navController: NavController) {
         mutableStateOf(App.listOfFavorite.contains(Favorite(user_id = App.userId, product_id = product.id!!)))
     }
 
+    val listOfCart by mainViewModel.listOfCart.collectAsState()
+
     Column(
         modifier = Modifier.clickable {
             navController.navigate("details")
@@ -302,9 +302,9 @@ fun SneakerScreen(product: Product, navController: NavController) {
                             null,
                             tint = Color.Unspecified,
                             modifier = Modifier.clickable {
-                                if (!App.listOfCart.contains(Cart(user_id = App.userId, product_id = product.id, quantity = 1))){
+                                mainViewModel.getCartProductsList(App.userId)
+                                if (listOfCart.find { it.user_id == App.userId && it.product_id == product.id } == null){
                                     mainViewModel.insertCart(Cart(user_id = App.userId, product_id = product.id, quantity = 1))
-                                    App.listOfCart.add(Cart(user_id = App.userId, product_id = product.id, quantity = 1))
                                 }
                             }
                         )

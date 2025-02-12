@@ -7,5 +7,5 @@ data class Cart (
     val id: String? = null,
     val user_id: String?,
     val product_id: String?,
-    val quantity: Int?
+    var quantity: Int?
 )

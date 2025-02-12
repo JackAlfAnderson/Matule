@@ -65,7 +65,7 @@ fun DetailsScreen(navController: NavController) {
         //pagerState.animateScrollToPage()
     }
 
-
+    val listOfCart by mainViewModel.listOfCart.collectAsState()
 
 
 
@@ -177,9 +177,9 @@ fun DetailsScreen(navController: NavController) {
                 ),
                 onClick = {
                     isAdd = !isAdd
-                    if (!App.listOfCart.contains(Cart(user_id = App.userId, product_id = listOfProducts[pagerState.currentPage].id, quantity = 1))){
+                    mainViewModel.getCartProductsList(App.userId)
+                    if (listOfCart.find { it.user_id == App.userId && it.product_id == listOfProducts[pagerState.currentPage].id } == null){
                         mainViewModel.insertCart(Cart(user_id = App.userId, product_id = listOfProducts[pagerState.currentPage].id, quantity = 1))
-                        App.listOfCart.add(Cart(user_id = App.userId, product_id = listOfProducts[pagerState.currentPage].id, quantity = 1))
                     }
                 },
                 modifier = Modifier

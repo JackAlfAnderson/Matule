@@ -32,7 +32,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +41,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -55,20 +53,21 @@ import com.example.matulemain.presentation.mainViewModel
 import com.example.matulemain.ui.theme.accent
 import com.example.matulemain.ui.theme.back
 import com.example.matulemain.ui.theme.red
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun MyCartScreen(navController: NavController) {
 
+
     LaunchedEffect(Unit) {
-        mainViewModel.getCartList(App.userId)
+        mainViewModel.getCartProductsList(App.userId)
 
     }
 
-    val listOfCartProducts by mainViewModel.listOfCart.collectAsState()
+    val listOfCartProducts by mainViewModel.listOfCartProducts.collectAsState()
+    val itogo by remember(listOfCartProducts) {
+        mutableStateOf(listOfCartProducts.sumOf { it.price ?: 0.0 })
+    }
 
-    val itogo by remember { mutableStateOf(0.0) }
 
     Column(
         Modifier
@@ -199,6 +198,7 @@ fun CartSneakerItem(product: Product, navController: NavController) {
         "3"
     )
 
+
     val pagerState = PagerState { pager.size }
 
     LaunchedEffect(Unit) {
@@ -209,16 +209,19 @@ fun CartSneakerItem(product: Product, navController: NavController) {
         pagerState
     ) { page ->
         when (page) {
-            0 -> CartItemLeft(product, pagerState)
+            0 -> CartItemLeft(
+                product
+            )
             1 -> CartItem(product)
-            2 -> CartItemRight(product, pagerState, navController)
+            2 -> CartItemRight(product, navController)
         }
     }
 
 }
 
 @Composable
-fun CartItemRight(product: Product, pagerState: PagerState, navController: NavController) {
+fun CartItemRight(product: Product, navController: NavController) {
+
     Row(Modifier.padding(bottom = 15.dp)) {
         Card(
             colors = CardDefaults.cardColors(
@@ -259,6 +262,7 @@ fun CartItemRight(product: Product, pagerState: PagerState, navController: NavCo
         }
         Spacer(Modifier.width(10.dp))
         Column {
+
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = red
@@ -274,13 +278,6 @@ fun CartItemRight(product: Product, pagerState: PagerState, navController: NavCo
                                 quantity = 1
                             )
                         )
-                        val cartToRemove = App.listOfCart.find { cart ->
-                            cart.user_id == App.userId && cart.product_id == App.userId
-                        }
-
-                        if (cartToRemove != null) {
-                            App.listOfCart.remove(cartToRemove)
-                        }
                         navController.navigate("myCart")
                     },
                 shape = RoundedCornerShape(14.dp)
@@ -304,30 +301,26 @@ fun CartItemRight(product: Product, pagerState: PagerState, navController: NavCo
 }
 
 @Composable
-fun CartItemLeft(product: Product, pagerState: PagerState) {
+fun CartItemLeft(
+    product: Product
+) {
 
-    // Поиск корзины по user_id и product_id
-    val cart = App.listOfCart.find { cart ->
-        cart.user_id == App.userId && cart.product_id == product.id
-    }
-    val scope = rememberCoroutineScope()
-    var foundedCart by remember { mutableStateOf(Cart(null,null,null,null)) }
+    var quantity by remember { mutableStateOf(1) }
+    val listOfCart by mainViewModel.listOfCart.collectAsState()
+    var indicator by remember { mutableStateOf(true) }
+//    listOfCart.find { it.user_id == App.userId && it.product_id == product.id } != null
+    LaunchedEffect(Unit) {
+        mainViewModel.getCartList(App.userId)
+            while (indicator) {
+                try {
+                    quantity = mainViewModel.baseManager.getQuantity(App.userId, product.id!!)
+                    Log.d("some", "launch")
+                } catch (e: Exception){
+                    indicator = false
+                }
 
-// Если корзина найдена, запрашиваем её данные
-    if (cart != null) {
-        LaunchedEffect(Unit) {
-            mainViewModel.findCartById(cart)
-            scope.launch {
-                foundedCart = mainViewModel.baseManager.getCartById(cart)
             }
-        }
     }
-
-
-
-// Устанавливаем количество, если корзина найдена
-    var quantity by remember { mutableStateOf(0) }
-    quantity = foundedCart.quantity ?: 0
 
     Row(Modifier.padding(bottom = 15.dp)) {
         Card(
@@ -349,15 +342,8 @@ fun CartItemLeft(product: Product, pagerState: PagerState) {
                     tint = Color.White,
                     contentDescription = null,
                     modifier = Modifier.clickable {
-                        quantity++
-                        mainViewModel.setQuantity(
-                            Cart(
-                                id = foundedCart.id,
-                                user_id = App.userId,
-                                product_id = product.id,
-                                quantity
-                            )
-                        )
+
+                        mainViewModel.updateQuantity(App.userId, product.id!!, quantity + 1)
                     }
                 )
                 Spacer(Modifier.height(11.dp))
@@ -369,15 +355,8 @@ fun CartItemLeft(product: Product, pagerState: PagerState) {
                     contentDescription = null,
                     modifier = Modifier.clickable {
                         if (quantity > 1) {
-                            quantity--
-                            mainViewModel.setQuantity(
-                                Cart(
-                                    id = foundedCart.id,
-                                    user_id = App.userId,
-                                    product_id = product.id,
-                                    quantity
-                                )
-                            )
+
+                            mainViewModel.updateQuantity(App.userId, product.id!!, quantity - 1)
                         }
                     }
                 )
