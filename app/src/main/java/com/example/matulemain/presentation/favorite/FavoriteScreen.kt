@@ -100,7 +100,7 @@ fun FavoriteScreen(navController: NavController) {
                                 modifier = Modifier
                                     .size(28.dp)
                                     .clickable {
-
+                                        
                                     }
                             )
                         }

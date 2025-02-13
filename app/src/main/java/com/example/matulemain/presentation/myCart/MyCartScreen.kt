@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +55,8 @@ import com.example.matulemain.presentation.mainViewModel
 import com.example.matulemain.ui.theme.accent
 import com.example.matulemain.ui.theme.back
 import com.example.matulemain.ui.theme.red
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun MyCartScreen(navController: NavController) {
@@ -198,26 +202,21 @@ fun CartSneakerItem(product: Product, navController: NavController) {
         "3"
     )
 
+    val pagerState = rememberPagerState (initialPage = 1){ pager.size }
 
-    val pagerState = PagerState { pager.size }
-
-    LaunchedEffect(Unit) {
-        pagerState.animateScrollToPage(1)
-    }
 
     HorizontalPager(
         pagerState
     ) { page ->
         when (page) {
-            0 -> CartItemLeft(
-                product
-            )
+            0 -> CartItemLeft(product)
             1 -> CartItem(product)
             2 -> CartItemRight(product, navController)
         }
     }
-
 }
+
+
 
 @Composable
 fun CartItemRight(product: Product, navController: NavController) {
@@ -278,6 +277,7 @@ fun CartItemRight(product: Product, navController: NavController) {
                                 quantity = 1
                             )
                         )
+
                         navController.navigate("myCart")
                     },
                 shape = RoundedCornerShape(14.dp)
@@ -309,17 +309,18 @@ fun CartItemLeft(
     val listOfCart by mainViewModel.listOfCart.collectAsState()
     var indicator by remember { mutableStateOf(true) }
 //    listOfCart.find { it.user_id == App.userId && it.product_id == product.id } != null
+
     LaunchedEffect(Unit) {
         mainViewModel.getCartList(App.userId)
-            while (indicator) {
-                try {
-                    quantity = mainViewModel.baseManager.getQuantity(App.userId, product.id!!)
-                    Log.d("some", "launch")
-                } catch (e: Exception){
-                    indicator = false
-                }
-
+        while (indicator) {
+            try {
+                quantity = mainViewModel.baseManager.getQuantity(App.userId, product.id!!)
+                Log.d("some", "launch")
+            } catch (e: Exception) {
+                indicator = false
             }
+
+        }
     }
 
     Row(Modifier.padding(bottom = 15.dp)) {
