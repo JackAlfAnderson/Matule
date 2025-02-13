@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -43,6 +44,7 @@ import coil3.compose.AsyncImage
 import com.example.matulemain.R
 import com.example.matulemain.data.app.App
 import com.example.matulemain.domain.models.Cart
+import com.example.matulemain.domain.models.Favorite
 import com.example.matulemain.domain.models.Product
 import com.example.matulemain.presentation.mainViewModel
 import com.example.matulemain.ui.theme.accent
@@ -115,8 +117,9 @@ fun DetailsScreen(navController: NavController) {
             }
             Spacer(Modifier.height(20.dp))
             HorizontalPager(pagerState) { page ->
-                PagerItem(listOfProducts[page])
+                PagerItem(listOfProducts[page], listOfProducts, pagerState)
             }
+
         }
 
     }
@@ -133,90 +136,26 @@ fun DetailsScreen(navController: NavController) {
 
         }
     }
-    
-    Box(
-        Modifier
-            .fillMaxSize()
-            .padding(bottom = 40.dp, start = 20.dp, end = 20.dp),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        var isLiked by remember { mutableStateOf(false) }
-        Box(Modifier.fillMaxWidth()) {
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.LightGray
-                ),
-                shape = RoundedCornerShape(100),
-                modifier = Modifier.size(52.dp).clickable {
-                    isLiked = !isLiked
-                }
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Icon(
-                        if (isLiked) painterResource(R.drawable.favoritefill) else painterResource(R.drawable.favoriteicon),
-                        null,
-                        tint = if (isLiked) red else Color.Unspecified,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-
-            }
-
-        }
-        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd){
-
-            var isAdd by remember { mutableStateOf(false) }
-
-            Button(
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = accent
-                ),
-                onClick = {
-                    isAdd = !isAdd
-                    mainViewModel.getCartProductsList(App.userId)
-                    if (listOfCart.find { it.user_id == App.userId && it.product_id == listOfProducts[pagerState.currentPage].id } == null){
-                        mainViewModel.insertCart(Cart(user_id = App.userId, product_id = listOfProducts[pagerState.currentPage].id, quantity = 1))
-                    }
-                },
-                modifier = Modifier
-                    .height(52.dp)
-                    .padding()
-                    .width(245.dp),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Box {
-                    Box(
-                        Modifier.fillMaxWidth()
-                    ){
-                        Icon(
-                            painterResource(R.drawable.bagiconoutline),
-                            null,
-                            tint = Color.White
-                        )
-                    }
-                    Box (
-                        Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ){
-                        Text(if(isAdd) "Добавлено" else "В Корзину", color = Color.White)
-                    }
-                }
-
-            }
-        }
-    }
 
 }
 
 
 @Composable
-fun PagerItem(product: Product) {
+fun PagerItem(product: Product, listOfProducts: List<Product>, pagerState: PagerState) {
 
     var showMore by remember { mutableStateOf(false) }
+    val listOfCart by mainViewModel.listOfCart.collectAsState()
+    val listOfFavorite by mainViewModel.listOfFavorites.collectAsState()
+
+    LaunchedEffect(Unit) {
+        mainViewModel.getCartProductsList(App.userId)
+        mainViewModel.getCartList(App.userId)
+        mainViewModel.getFavoriteList(App.userId)
+    }
+
+    val isInFavorite = listOfFavorite.any {
+        it.id == product.id
+    }
 
     Column(
         Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
@@ -257,7 +196,7 @@ fun PagerItem(product: Product) {
         }
 
         Spacer(Modifier.height(126.dp))
-        if (showMore){
+        if (showMore) {
             Text(
                 product.description.toString(),
                 modifier = Modifier
@@ -284,7 +223,117 @@ fun PagerItem(product: Product) {
                 },
             textAlign = TextAlign.End
         )
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(bottom = 20.dp),
+            contentAlignment = Alignment.BottomCenter
+        ) {
 
+            Box(Modifier.fillMaxWidth()) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.LightGray
+                    ),
+                    shape = RoundedCornerShape(100),
+                    modifier = Modifier
+                        .size(52.dp)
+                        .clickable {
+                            if (!isInFavorite) {
+                                mainViewModel.insertFavorite(
+                                    Favorite(
+                                        product_id = product.id!!,
+                                        user_id = App.userId
+                                    )
+                                )
+                                App.listOfFavorite.add(
+                                    Favorite(
+                                        product_id = product.id,
+                                        user_id = App.userId
+                                    )
+                                )
+                            } else {
+                                mainViewModel.deleteFavorite(App.userId, product.id!!)
+                                App.listOfFavorite.remove(
+                                    Favorite(
+                                        product_id = product.id,
+                                        user_id = App.userId
+                                    )
+                                )
+                            }
+
+                        }
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Icon(
+                            if (isInFavorite) painterResource(R.drawable.favoritefill) else painterResource(
+                                R.drawable.favoriteicon
+                            ),
+                            null,
+                            tint = if (isInFavorite) red else Color.Unspecified,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+
+                }
+
+            }
+            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+
+                val isInCart = listOfCart.any {
+                    it.user_id == App.userId && it.product_id == listOfProducts[pagerState.currentPage].id
+                }
+
+                Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = accent
+                    ),
+                    onClick = {
+                        mainViewModel.getCartProductsList(App.userId)
+                        mainViewModel.getCartList(App.userId)
+                        if (!isInCart) {
+                            // Добавление товара в корзину, если его там нет
+                            mainViewModel.insertCart(
+                                Cart(
+                                    user_id = App.userId,
+                                    product_id = listOfProducts[pagerState.currentPage].id,
+                                    quantity = 1
+                                )
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .height(52.dp)
+                        .padding()
+                        .width(245.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Box {
+                        Box(
+                            Modifier.fillMaxWidth()
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.bagiconoutline),
+                                null,
+                                tint = Color.White
+                            )
+                        }
+                        Box(
+                            Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(if (isInCart) "Добавлено" else "В Корзину", color = Color.White)
+
+                        }
+                    }
+
+                }
+            }
+        }
     }
 }
 
