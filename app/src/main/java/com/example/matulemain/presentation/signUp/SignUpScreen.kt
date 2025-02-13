@@ -1,7 +1,6 @@
-package com.example.matulemain.presentation.signIn
+package com.example.matulemain.presentation.signUp
 
 import android.util.Patterns
-import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -34,26 +35,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.matulemain.R
+import com.example.matulemain.presentation.signIn.DialogWindow
 import com.example.matulemain.ui.theme.accent
 import com.example.matulemain.ui.theme.hint
 import com.example.matulemain.ui.theme.mainColor
 
 @Composable
-fun SignInScreen(navController: NavController) {
+fun SignUpScreen(navController: NavController) {
+//values
 
-    //values
+    var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     //boolean
-
+    var checkBox by remember { mutableStateOf(false) }
     var isShow by remember { mutableStateOf(false) }
     var hider by remember { mutableStateOf(false) }
 
@@ -70,18 +73,51 @@ fun SignInScreen(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Box(contentAlignment = Alignment.Center) {
+                Box(Modifier.fillMaxWidth()) {
+                    Icon(
+                        painterResource(R.drawable.backicon),
+                        null,
+                        tint = Color.Unspecified,
+                        modifier = Modifier.clickable {
+                            navController.navigate("home")
+                        }
+                    )
+                }
+            }
             if (isShow){
                 DialogWindow("Ошибка", "Почта некорректно введена")
             }
 
-            Text("Привет !", fontSize = 32.sp)
+            Text("Регистрация", fontSize = 32.sp)
             Spacer(Modifier.height(8.dp))
             Text(
                 "Заполните Свои Данные Или Продолжите Через Социальные Медиа ",
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center,
             )
-            Spacer(Modifier.height(35.dp))
+            Spacer(Modifier.height(30.dp))
+            Text("Ваше имя", fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
+            Spacer(Modifier.height(12.dp))
+            TextField(
+                value = name,
+                onValueChange = {
+                    name = it
+                },
+                label = {
+                    Text(if (name.isEmpty()) "хххххххх" else "", color = hint)
+                },
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = mainColor,
+                    focusedContainerColor = mainColor,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+
+                ),
+                shape = RoundedCornerShape(15.dp),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(30.dp))
             Text("Email", fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
             Spacer(Modifier.height(12.dp))
             TextField(
@@ -125,7 +161,8 @@ fun SignInScreen(navController: NavController) {
                 visualTransformation = if (hider) PasswordVisualTransformation() else VisualTransformation.None,
                 trailingIcon = {
                     Icon(
-                        painter = if(hider) painterResource(R.drawable.eye_open) else painterResource(R.drawable.eye_slash),
+                        painter = if(hider) painterResource(R.drawable.eye_open) else painterResource(
+                            R.drawable.eye_slash),
                         null,
                         modifier = Modifier.clickable {
                             hider = !hider
@@ -136,17 +173,25 @@ fun SignInScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(16.dp))
-            Text(
-                "Восстановить",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-
+            Row (Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
+                Card(
+                    modifier = Modifier.size(18.dp).clickable {
+                        checkBox = !checkBox
                     },
-                textAlign = TextAlign.End,
-                fontSize = 12.sp,
-                color = hint
-            )
+                    colors = CardDefaults.cardColors(
+                        mainColor
+                    ),
+                    shape = RoundedCornerShape(6.dp)
+                ) {
+                    if (checkBox){
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Icon(painterResource(R.drawable.vector), null)
+                        }
+                    }
+                }
+                Spacer(Modifier.width(12.dp))
+                Text("Даю согласие на обработку персональных данных", textDecoration = TextDecoration.Underline, color = hint, modifier = Modifier.padding(end = 40.dp), fontSize = 16.sp)
+            }
             Spacer(Modifier.height(24.dp))
             Button(
                 colors = ButtonDefaults.buttonColors(
@@ -154,7 +199,7 @@ fun SignInScreen(navController: NavController) {
 
                     ),
                 enabled = if (Patterns.EMAIL_ADDRESS.matcher(email)
-                        .matches() && password.length > 6
+                        .matches() && password.length > 6 && checkBox
                 ) true else false,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -164,7 +209,7 @@ fun SignInScreen(navController: NavController) {
                 },
                 shape = RoundedCornerShape(14.dp)
             ) {
-                Text("Войти")
+                Text("Зарегестрироваться")
             }
             Spacer(Modifier.height(209.dp))
         }
@@ -175,11 +220,11 @@ fun SignInScreen(navController: NavController) {
         Row(
             Modifier.padding(bottom = 50.dp)
         ) {
-            Text("Вы впервые? ", fontSize = 16.sp, color = hint)
-            Text("Создать пользователя", fontSize = 16.sp,
+            Text("Есть аккаунт? ", fontSize = 16.sp, color = hint)
+            Text("Войти", fontSize = 16.sp,
                 modifier = Modifier
                     .clickable {
-                        navController.navigate("signUp")
+                        navController.navigate("signIn")
                     }
             )
         }
@@ -187,41 +232,8 @@ fun SignInScreen(navController: NavController) {
     }
 }
 
-
-@Composable
-fun DialogWindow(error: String, text: String) {
-    Dialog(
-        onDismissRequest = {
-
-        }
-    ) {
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            )
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(20.dp)
-            ) {
-                Text(error)
-                Spacer(Modifier.height(16.dp))
-                Text(text)
-            }
-        }
-    }
-
-}
-
 @Preview
 @Composable
-private fun DialogWindowPreview() {
-    DialogWindow("Ошибка", "Некорректная почта")
-}
-
-@Preview
-@Composable
-private fun SignInScreenPreview() {
-    SignInScreen(rememberNavController())
+private fun SignUpPrev() {
+    SignUpScreen(rememberNavController())
 }

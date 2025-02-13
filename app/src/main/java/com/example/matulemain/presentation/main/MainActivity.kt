@@ -1,4 +1,4 @@
-package com.example.matulemain.presentation
+package com.example.matulemain.presentation.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -30,12 +30,14 @@ import com.example.matulemain.data.supabase.MainViewModel
 import com.example.matulemain.presentation.category.CategoryScreen
 import com.example.matulemain.presentation.details.DetailsScreen
 import com.example.matulemain.presentation.favorite.FavoriteScreen
+import com.example.matulemain.presentation.forgotPassword.ForgotPasswordScreen
 import com.example.matulemain.presentation.home.HomeScreen
 import com.example.matulemain.presentation.myCart.MyCartScreen
 import com.example.matulemain.presentation.onBoarding.OnBoardingScreen
 import com.example.matulemain.presentation.popular.PopularScreen
 import com.example.matulemain.presentation.search.SearchScreen
 import com.example.matulemain.presentation.signIn.SignInScreen
+import com.example.matulemain.presentation.signUp.SignUpScreen
 import com.example.matulemain.presentation.splash.SplashScreen
 import com.example.matulemain.ui.theme.MatuleMainTheme
 import com.example.matulemain.ui.theme.accent
@@ -76,6 +78,14 @@ class MainActivity : ComponentActivity() {
                         SignInScreen(navController)
                     }
                     composable(route = "signUp") {
+                        isBottom = false
+                        SignUpScreen(navController)
+                    }
+                    composable(route = "forgotPassword") {
+                        isBottom = false
+                        ForgotPasswordScreen(navController)
+                    }
+                    composable(route = "otpVerification") {
                         isBottom = false
 
                     }

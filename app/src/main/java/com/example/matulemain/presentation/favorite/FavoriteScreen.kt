@@ -39,7 +39,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.matulemain.R
 import com.example.matulemain.data.app.App
 import com.example.matulemain.domain.models.Product
-import com.example.matulemain.presentation.mainViewModel
+import com.example.matulemain.presentation.main.mainViewModel
 import com.example.matulemain.presentation.home.SneakerScreen
 import com.example.matulemain.ui.theme.back
 import com.example.matulemain.ui.theme.red

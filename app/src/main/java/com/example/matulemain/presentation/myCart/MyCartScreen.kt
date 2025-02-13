@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -33,7 +32,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,12 +49,10 @@ import com.example.matulemain.R
 import com.example.matulemain.data.app.App
 import com.example.matulemain.domain.models.Cart
 import com.example.matulemain.domain.models.Product
-import com.example.matulemain.presentation.mainViewModel
+import com.example.matulemain.presentation.main.mainViewModel
 import com.example.matulemain.ui.theme.accent
 import com.example.matulemain.ui.theme.back
 import com.example.matulemain.ui.theme.red
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun MyCartScreen(navController: NavController) {

@@ -1,7 +1,6 @@
-package com.example.matulemain.presentation.signIn
+package com.example.matulemain.presentation.forgotPassword
 
 import android.util.Patterns
-import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -41,21 +41,24 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.matulemain.R
+import com.example.matulemain.presentation.signIn.DialogWindow
 import com.example.matulemain.ui.theme.accent
 import com.example.matulemain.ui.theme.hint
 import com.example.matulemain.ui.theme.mainColor
 
 @Composable
-fun SignInScreen(navController: NavController) {
+fun ForgotPasswordScreen(navController: NavController) {
 
-    //values
     var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
 
-    //boolean
-
+    var showDialog by remember { mutableStateOf(false) }
     var isShow by remember { mutableStateOf(false) }
-    var hider by remember { mutableStateOf(false) }
+
+    if (showDialog){
+        DialogForgotWindow("Проверьте Ваш Email", "Мы отправили код восстановления пароля на вашу электронную почту.", onDismissRequest = {
+            navController.navigate("")
+        })
+    }
 
     Column(
         modifier = Modifier
@@ -74,16 +77,16 @@ fun SignInScreen(navController: NavController) {
                 DialogWindow("Ошибка", "Почта некорректно введена")
             }
 
-            Text("Привет !", fontSize = 32.sp)
+            Text("Забыл Пароль", fontSize = 32.sp)
             Spacer(Modifier.height(8.dp))
             Text(
-                "Заполните Свои Данные Или Продолжите Через Социальные Медиа ",
+                "Введите Свою Учетную Запись\n" +
+                        " Для Сброса",
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.height(35.dp))
-            Text("Email", fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
-            Spacer(Modifier.height(12.dp))
+
             TextField(
                 value = email,
                 onValueChange = {
@@ -102,51 +105,6 @@ fun SignInScreen(navController: NavController) {
                 shape = RoundedCornerShape(15.dp),
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(Modifier.height(26.dp))
-            Text("Пароль", fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
-            Spacer(Modifier.height(12.dp))
-            TextField(
-                value = password,
-                onValueChange = {
-                    password = it
-                },
-                label = {
-                    if (password.isEmpty()){
-                        Text("••••••••", color = hint)
-                    }
-                },
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = mainColor,
-                    focusedContainerColor = mainColor,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-
-                ),
-                visualTransformation = if (hider) PasswordVisualTransformation() else VisualTransformation.None,
-                trailingIcon = {
-                    Icon(
-                        painter = if(hider) painterResource(R.drawable.eye_open) else painterResource(R.drawable.eye_slash),
-                        null,
-                        modifier = Modifier.clickable {
-                            hider = !hider
-                        }
-                    )
-                },
-                shape = RoundedCornerShape(15.dp),
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(Modifier.height(16.dp))
-            Text(
-                "Восстановить",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-
-                    },
-                textAlign = TextAlign.End,
-                fontSize = 12.sp,
-                color = hint
-            )
             Spacer(Modifier.height(24.dp))
             Button(
                 colors = ButtonDefaults.buttonColors(
@@ -154,7 +112,7 @@ fun SignInScreen(navController: NavController) {
 
                     ),
                 enabled = if (Patterns.EMAIL_ADDRESS.matcher(email)
-                        .matches() && password.length > 6
+                        .matches()
                 ) true else false,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -164,7 +122,7 @@ fun SignInScreen(navController: NavController) {
                 },
                 shape = RoundedCornerShape(14.dp)
             ) {
-                Text("Войти")
+                Text("Отправить")
             }
             Spacer(Modifier.height(209.dp))
         }
@@ -187,12 +145,11 @@ fun SignInScreen(navController: NavController) {
     }
 }
 
-
 @Composable
-fun DialogWindow(error: String, text: String) {
+fun DialogForgotWindow(text1: String, text2: String, onDismissRequest: () -> Unit) {
     Dialog(
         onDismissRequest = {
-
+            onDismissRequest()
         }
     ) {
         Card(
@@ -205,23 +162,31 @@ fun DialogWindow(error: String, text: String) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(20.dp)
             ) {
-                Text(error)
-                Spacer(Modifier.height(16.dp))
-                Text(text)
+                Card(
+                    shape = RoundedCornerShape(100),
+                    colors = CardDefaults.cardColors(
+                        containerColor = accent
+                    ),
+                    modifier = Modifier.size(44.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()){
+                        Icon(painterResource(R.drawable.emailicon), null, tint = Color.Unspecified)
+                    }
+                }
+                Spacer(Modifier.height(30.dp))
+
+                Text(text1)
+                Spacer(Modifier.height(10.dp))
+                Text(text2, textAlign = TextAlign.Center)
             }
         }
     }
 
 }
 
-@Preview
-@Composable
-private fun DialogWindowPreview() {
-    DialogWindow("Ошибка", "Некорректная почта")
-}
 
 @Preview
 @Composable
-private fun SignInScreenPreview() {
-    SignInScreen(rememberNavController())
+private fun ForgotPreview() {
+    ForgotPasswordScreen(rememberNavController())
 }
