@@ -7,15 +7,15 @@ class UserValidateManager {
 
     fun emailValidate(email: String): Boolean {
 
-        return !Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
     fun passwordValidate(password: String): Boolean {
-        return !(password.length > 6)
+        return (password.length > 6)
     }
 
     fun showDialog() {
-        isDialogShow = false
+        isDialogShow = true
     }
 
     fun login(email: String, password: String): Boolean {
