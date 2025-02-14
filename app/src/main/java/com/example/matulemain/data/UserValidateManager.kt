@@ -28,6 +28,7 @@ class UserValidateManager {
                 return false
             }
 
+
         return true
     }
 }
