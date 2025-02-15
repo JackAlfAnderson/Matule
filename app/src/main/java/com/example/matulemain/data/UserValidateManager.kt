@@ -7,11 +7,11 @@ class UserValidateManager {
 
     fun emailValidate(email: String): Boolean {
 
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches() // результат валидации почты возвращается сразу, что делает код более компактным
     }
 
     fun passwordValidate(password: String): Boolean {
-        return (password.length > 6)
+        return (password.length > 6) // результат валидации пароля возвращается сразу, что делает код более компактным
     }
 
     fun showDialog() {
@@ -19,6 +19,8 @@ class UserValidateManager {
     }
 
     fun login(email: String, password: String): Boolean {
+
+        //используются уже готовые функции для проверки на валидность почты и пароля
             if (!emailValidate(email)){
                 showDialog()
                 return false
